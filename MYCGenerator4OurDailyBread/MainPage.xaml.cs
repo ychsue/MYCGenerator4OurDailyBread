@@ -25,6 +25,7 @@ namespace MYCGenerator4OurDailyBread
         public MainPage()
         {
             this.InitializeComponent();
+            fmMain.Navigate(typeof(MYCGenerator.Pages.OurDailyBreadPage));
         }
     }
 }
