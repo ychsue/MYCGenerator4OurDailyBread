@@ -1,0 +1,8 @@
+﻿<Application
+    x:Class="MYCGenerator4OurDailyBread.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MYCGenerator4OurDailyBread"
+    RequestedTheme="Light">
+
+</Application>
