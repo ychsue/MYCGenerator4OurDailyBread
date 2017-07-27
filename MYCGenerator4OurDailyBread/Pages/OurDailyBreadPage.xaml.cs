@@ -1,11 +1,13 @@
 ﻿using HtmlAgilityPack;
-using MYCGenerator.Controllers;
+using MYCGenerator.ViewModels;
+using MYCGenerator4OurDailyBread.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
@@ -34,31 +36,48 @@ namespace MYCGenerator.Pages
         }
 
         #region     Binding Properties
-        private string _todayTitle;
-        public string todayTitle
+        private VMODBLangCodes _langCodes;
+        public VMODBLangCodes langCodes
         {
-            get { return _todayTitle; }
-            set { _todayTitle = value; NotifyPropertyChanged(); }
+            get { return _langCodes; }
+            set { _langCodes = value; NotifyPropertyChanged(); }
         }
-        private string _todayImageURL;
-        public string todayImageURL
+        private VMODBLangCode _contentLangCode;
+        public VMODBLangCode contentLangCode
         {
-            get { return _todayImageURL; }
-            set { _todayImageURL = value; NotifyPropertyChanged(); }
+            get { return _contentLangCode; }
+            set { _contentLangCode = value; NotifyPropertyChanged(); }
         }
-        
+        private VMODBLangCode _answerLangCode;
+        public VMODBLangCode answerLangCode
+        {
+            get { return _answerLangCode; }
+            set { _answerLangCode = value; NotifyPropertyChanged(); }
+        }
 
-        public MYCGenerator4ODB todayMYCGen4ODB
+        private double _idealPairWidth =100;
+        public double idealPairWidth
         {
-            get { return (MYCGenerator4ODB)GetValue(todayMYCGen4ODBProperty); }
-            set { SetValue(todayMYCGen4ODBProperty, value); }
+            get { return _idealPairWidth; }
+            set { _idealPairWidth = value; NotifyPropertyChanged(); }
         }
 
-        // Using a DependencyProperty as the backing store for todayMYCGen4ODB.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty todayMYCGen4ODBProperty =
-            DependencyProperty.Register("todayMYCGen4ODB", typeof(MYCGenerator4ODB), typeof(OurDailyBreadPage), new PropertyMetadata(new MYCGenerator4ODB()));
-        
+
+
+        public VM1OurDailyBread ourDailyBread
+        {
+            get { return (VM1OurDailyBread)GetValue(ourDailyBreadProperty); }
+            set { SetValue(ourDailyBreadProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ourDailyBread.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ourDailyBreadProperty =
+            DependencyProperty.Register("ourDailyBread", typeof(VM1OurDailyBread), typeof(OurDailyBreadPage), new PropertyMetadata(new VM1OurDailyBread()));
+
         #endregion
+
+        public bool isAnsGet = false;
+        public bool isContentGet = false;
 
         public OurDailyBreadPage()
         {
@@ -69,19 +88,23 @@ namespace MYCGenerator.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            //* [2017-07-25 15:12] Set the language
+            langCodes = new VMODBLangCodes();
+            contentLangCode = langCodes.Where(x => x.LangCode == "zh-TW").FirstOrDefault();
+            answerLangCode = langCodes.Where(x => x.LangCode == "en-US").FirstOrDefault();
 
-#if DEBUG
-//            todayMYCGen4ODB.Ans4ODB.initialize("https://odb.org/2017/06/22/silence/", isTodayURL: true, callbackObj: this);
-//            todayMYCGen4ODB.Content4ODB.initialize("https://traditional-odb.org/2017/06/22/%e9%9d%9c%e9%bb%98/", isTodayURL: true);
-//#else
-            todayMYCGen4ODB.Ans4ODB.initialize("https://ourdailybread.org",callbackObj: this);
-            todayMYCGen4ODB.Content4ODB.initialize("https://traditional-odb.org/");
-#endif
+            ourDailyBread.initialize(contentLangCode.Address, VMContentAnswerPair.GetPContent(), () => { isContentGet = true; return null; });
+            ourDailyBread.initialize(answerLangCode.Address, VMContentAnswerPair.GetPAnswer(), () => { isAnsGet = true; return null; });
         }
 
         private void btCreateMYC_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            idealPairWidth = e.NewSize.Width / 2 - 24;
         }
     }
 }

@@ -7,23 +7,174 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel>
-            <Border x:Name="bdMain">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="Grid_SizeChanged">
+        <Grid x:Name="gdTemp">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid x:Name="gdContentTemp" Grid.Column="0" Grid.Row="0" Margin="12"></Grid>
+            <Grid x:Name="gdAnswerTemp" Grid.Column="1" Grid.Row="0" Margin="12"></Grid>
+            <Grid x:Name="gdMsgTemp" Grid.Column="0" Grid.Row="1" Margin="4"></Grid>
+        </Grid>
+        <Grid x:Name="gdMain">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <ScrollViewer VerticalScrollMode="Auto">
                 <StackPanel>
-                    <TextBlock Margin="4" FontSize="{StaticResource ContentDialogTitleMaxHeight}" HorizontalAlignment="Center" TextWrapping="Wrap"
-                               Text="{Binding todayTitle, ElementName=page}"></TextBlock>
-                    <Image Margin="4" HorizontalAlignment="Center"
-                           Source="{Binding todayImageURL, ElementName=page}"></Image>
-                    <Button x:Name="btCreateMYC" Content="Create" Click="btCreateMYC_Click"></Button>
-                </StackPanel>
-            </Border>
+                    <DatePicker HorizontalAlignment="Center" Margin="4"/>
 
-            <Border x:Name="bdSettings">
-                <StackPanel>
+                    <!--#region 1. Head-->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!--#region 1.1 For Content-->
+                        <StackPanel Grid.Column="0" Margin="4">
+                            <TextBlock Text="Content" HorizontalAlignment="Center"/>
+                            <ComboBox HorizontalAlignment="Center" ItemsSource="{Binding langCodes, ElementName=page}"
+                            SelectedItem="{Binding contentLangCode, ElementName=page, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding View}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock Margin="4" FontSize="{StaticResource ContentDialogTitleMaxHeight}" HorizontalAlignment="Center" TextWrapping="Wrap"
+                            Text="{Binding ourDailyBread.title[0].Content, ElementName=page}"/>
+                            <Image Margin="4" HorizontalAlignment="Center"
+                            Source="{Binding ourDailyBread.imgURL[0].Content, ElementName=page}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <ListView ItemsSource="{Binding ourDailyBread.contentMp3,ElementName=page}" SelectedItem="{Binding ourDailyBread.selContentMP3,ElementName=page, Mode=TwoWay}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Content}"></TextBlock>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <AppBarButton Icon="Play"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <!--#endregion 1.1 For Content-->
+                        <!--#region 1.2 For Answer-->
+                        <StackPanel Grid.Column="1" Margin="4">
+                            <TextBlock Text="Answer" HorizontalAlignment="Center"/>
+                            <ComboBox HorizontalAlignment="Center" ItemsSource="{Binding langCodes, ElementName=page}"
+                            SelectedItem="{Binding answerLangCode, ElementName=page, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding View}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock Margin="4" FontSize="{StaticResource ContentDialogTitleMaxHeight}" HorizontalAlignment="Center" TextWrapping="Wrap"
+                            Text="{Binding ourDailyBread.title[0].Answer, ElementName=page}"/>
+                            <Image Margin="4" HorizontalAlignment="Center"
+                            Source="{Binding ourDailyBread.imgURL[0].Answer, ElementName=page}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <ListView ItemsSource="{Binding ourDailyBread.answerMP3,ElementName=page}"  SelectedItem="{Binding ourDailyBread.selAnswerMP3,ElementName=page, Mode=TwoWay}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Content}"></TextBlock>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <AppBarButton Icon="Play"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <!--#endregion 1.2 For Answer-->
+                    </Grid>
+                    <!--#endregion 1. Head-->
+                    <!--#region 2. Content List-->
+                    <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
+                        <StackPanel>
+                            <Grid>
+                                <Rectangle Fill="LightYellow"/>
+                                <TextBlock Text="Paragraph List" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <ListView ItemsSource="{Binding ourDailyBread.Content, ElementName=page}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                    <!--#endregion 2. Content List-->
+                    <!--#region 3. Poems-->
+                    <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
+                        <StackPanel>
+                            <Grid>
+                                <Rectangle Fill="LightYellow"/>
+                                <TextBlock Text="Poem" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <ListView ItemsSource="{Binding ourDailyBread.poem, ElementName=page}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                    <!--#endregion 3. Poems-->
+                    <!--#region 4. Thoughts-->
+                    <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
+                        <StackPanel>
+                            <Grid>
+                                <Rectangle Fill="LightYellow"/>
+                                <TextBlock Text="Thoughts" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <ListView ItemsSource="{Binding ourDailyBread.thought, ElementName=page}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                    <!--#endregion 4. Thoughts-->
+                    <!--#region 5. Bible Verses-->
+                    <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
+                        <StackPanel>
+                            <Grid>
+                                <Rectangle Fill="LightYellow"/>
+                                <TextBlock Text="Bible Verses" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <ListView ItemsSource="{Binding ourDailyBread.BibleContent, ElementName=page}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                    <!--#endregion 5. Bible Verses-->
 
                 </StackPanel>
-            </Border>
-        </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>

@@ -1,4 +1,4 @@
-﻿<Page
+﻿<Page x:Name="page"
     x:Class="MYCGenerator4OurDailyBread.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,6 +8,28 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Frame x:Name="fmMain"></Frame>
+        <Grid x:Name="gdTemp">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid x:Name="gdMainTemp"></Grid>
+            <Grid x:Name="gdMsgTemp" Grid.Row="1"></Grid>
+        </Grid>
+        <Grid x:Name="gdMain">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Frame x:Name="fmMain" Grid.Row="0"></Frame>
+
+            <ScrollViewer x:Name="svMsg" VerticalScrollMode="Auto" Grid.Row="1" Margin="4" Height="{Binding ActualHeight,ElementName=gdMsgTemp}" Visibility="{Binding MsgVisibility,ElementName=page}">
+                <Grid>
+                    <Rectangle Fill="Black"></Rectangle>
+                    <TextBlock TextWrapping="Wrap" x:Name="tbMsg" Foreground="Wheat" Text="{Binding stMsg, ElementName=page}"></TextBlock>
+                    <AppBarButton VerticalAlignment="Top" HorizontalAlignment="Left" Icon="Cancel" Foreground="Red" x:Name="abMsgClose" Click="abMsgClose_Click"></AppBarButton>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>

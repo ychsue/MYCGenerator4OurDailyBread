@@ -9,6 +9,8 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
+using MYCGenerator4OurDailyBread.Helpers;
 
 namespace MYCGenerator.ViewModels
 {
@@ -20,127 +22,293 @@ namespace MYCGenerator.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        private string _mainURL;
-        public string mainURL
+        private VMCollection4Comparison _paragraph = new VMCollection4Comparison();
+        public VMCollection4Comparison paragraph
         {
-            get { return _mainURL; }
-            set { _mainURL = value; NotifyPropertyChanged(); }
+            get { return _paragraph; }
+            set { _paragraph = value; NotifyPropertyChanged(); }
         }
 
-        private string _imgURL;
-        public string imgURL
+        private VMCollection4Comparison _mp3URLs = new VMCollection4Comparison();
+        public VMCollection4Comparison mp3URLs
+        {
+            get { return _mp3URLs; }
+            set { _mp3URLs = value; NotifyPropertyChanged(); }
+        }
+
+        private VMCollection4Comparison _pageURL = new VMCollection4Comparison();
+        public VMCollection4Comparison pageURL
+        {
+            get { return _pageURL; }
+            set { _pageURL = value; NotifyPropertyChanged(); }
+        }
+
+        private VMCollection4Comparison _imgURL =new VMCollection4Comparison();
+        public VMCollection4Comparison imgURL
         {
             get { return _imgURL; }
             set { _imgURL = value; NotifyPropertyChanged(); }
         }
 
-        private string _title;
-        public string title
+        private VMCollection4Comparison _title =new VMCollection4Comparison();
+        public VMCollection4Comparison title
         {
             get { return _title; }
             set { _title = value; NotifyPropertyChanged(); }
         }
 
-        private string _mp3URL;
-        public string mp3URL
+        private VMCollection4Comparison _contentMp3 = new VMCollection4Comparison();//Content: its #text, Answer: its Address
+        public VMCollection4Comparison contentMp3
         {
-            get { return _mp3URL; }
-            set { _mp3URL = value; NotifyPropertyChanged(); }
+            get { return _contentMp3; }
+            set { _contentMp3 = value; NotifyPropertyChanged(); }
+        }
+        private VMContentAnswerPair _selContentMP3;
+        public VMContentAnswerPair selContentMP3
+        {
+            get { return _selContentMP3; }
+            set { _selContentMP3 = value; NotifyPropertyChanged(); }
         }
 
-        private string _bibleURL;
-        public string bibleURL
+
+        private VMCollection4Comparison _answerMP3 = new VMCollection4Comparison();
+        public VMCollection4Comparison answerMP3
+        {
+            get { return _answerMP3; }
+            set { _answerMP3 = value; NotifyPropertyChanged(); }
+        }
+        private VMContentAnswerPair _selAnswerMP3;
+        public VMContentAnswerPair selAnswerMP3
+        {
+            get { return _selAnswerMP3; }
+            set { _selAnswerMP3 = value; NotifyPropertyChanged(); }
+        }
+
+
+
+
+        private VMCollection4Comparison _bibleURL = new VMCollection4Comparison();
+        public VMCollection4Comparison bibleURL
         {
             get { return _bibleURL; }
             set { _bibleURL = value; NotifyPropertyChanged(); }
         }
 
-        private ObservableCollection<string> _BibleContent = new ObservableCollection<string>();
-        public ObservableCollection<string> BibleContent
+        private VMCollection4Comparison _BibleContent = new VMCollection4Comparison();
+        public VMCollection4Comparison BibleContent
         {
             get { return _BibleContent; }
             set { _BibleContent = value; NotifyPropertyChanged(); }
         }
 
-        private string _poem;
-        public string poem
+        private VMCollection4Comparison _poem = new VMCollection4Comparison();
+        public VMCollection4Comparison poem
         {
             get { return _poem; }
             set { _poem = value; NotifyPropertyChanged(); }
         }
 
-        private string _thought;
-        public string thought
+        private VMCollection4Comparison _thought = new VMCollection4Comparison();
+        public VMCollection4Comparison thought
         {
             get { return _thought; }
             set { _thought = value; NotifyPropertyChanged(); }
         }
 
-        private ObservableCollection<string> _Content = new ObservableCollection<string>();
-        public ObservableCollection<string> Content
+        private VMCollection4Comparison _Content = new VMCollection4Comparison();
+        public VMCollection4Comparison Content
         {
             get { return _Content; }
             set { _Content = value; NotifyPropertyChanged(); }
         }
 
-
-        public async void initialize(string stURL,bool isTodayURL = false,object callbackObj = null)
+        internal async void initialize(string stURL, PropertyInfo OneOfPropInfo, Func<object> p = null, object date = null)
         {
-            var ODBPage = callbackObj as OurDailyBreadPage;
             //* [2017-06-21 14:23] Follow the instruction of http://html-agility-pack.net/
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(stURL);
+            HtmlDocument doc;
+            try
+            {
+                doc = await web.LoadFromWebAsync(stURL);
+            }
+            catch (Exception)
+            {
+                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL);
+                p?.Invoke();
+                return;
+            }
             doc.OptionOutputOriginalCase = true;
             var docNode = doc.DocumentNode;
             HtmlNode ndBuf;
 
             //* [2017-07-14 15:55] Get MainURL
-            if (isTodayURL == false)
+            if (pageURL.Count == 0)
+                pageURL.Add(new VMContentAnswerPair());
+            string pageUri = stURL;
+            if (date == null)
             {
                 ndBuf = docNode.Descendants("div").Where(x => x.Attributes["id"]?.Value.Contains("page-body") == true).FirstOrDefault();
                 ndBuf = ndBuf?.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("section") == true).FirstOrDefault();
                 ndBuf = ndBuf?.Descendants("a").FirstOrDefault();
-                this.mainURL = ndBuf?.Attributes["href"].Value;
+                pageUri = ndBuf?.Attributes["href"]?.Value;
+                if (pageUri== null)
+                {
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.CannotGetPageLink);
+                }
             }
-            else
-                this.mainURL = stURL;
+            //else //TODO ******************
+
+            OneOfPropInfo.SetValue(pageURL[0], pageUri);
             //* [2017-07-15 22:30] Get the main Part
             //** [2017-06-21 16:15] Get its WebSite
-            doc = await web.LoadFromWebAsync(mainURL);
-            doc.OptionOutputOriginalCase = true;
-            //* [2017-06-21 16:15] Get its title
-            docNode = doc.DocumentNode;
-            title = docNode.Descendants("h2")?.Where(x => x.Attributes["class"]?.Value == "entry-title").FirstOrDefault()?.InnerText;
-            //* [2017-07-06 17:11] Get its image
-            ndBuf = docNode.Descendants("figure").Where(x => x.Attributes["class"]?.Value == "entry-thumbnail").FirstOrDefault();
-            imgURL = ndBuf?.Descendants("img").FirstOrDefault()?.Attributes["src"]?.Value;
-            if (ODBPage != null)
+            if (pageUri != stURL)
             {
-                ODBPage.todayTitle = WebUtility.HtmlDecode(title);
-                ODBPage.todayImageURL = imgURL;
+                try
+                {
+                    doc = await web.LoadFromWebAsync((string)OneOfPropInfo.GetValue(pageURL[0]));
+                    doc.OptionOutputOriginalCase = true;
+                    //* [2017-06-21 16:15] Get its title
+                    docNode = doc.DocumentNode;
+                }
+                catch (Exception)
+                {
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL);
+                    p?.Invoke();
+                    return;
+                }
             }
 
+            string title = docNode.Descendants("h2")?.Where(x => x.Attributes["class"]?.Value.Contains("entry-title")==true).FirstOrDefault()?.InnerText;
+            if (title == null)
+            {
+                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoTitle, pageUri);
+            }
+            else
+            {
+                if (this.title.Count == 0)
+                    this.title.Add(new VMContentAnswerPair());
+                OneOfPropInfo.SetValue(this.title[0], title);
+            }
+            //* [2017-07-06 17:11] Get its image
+            ndBuf = docNode.Descendants("figure").Where(x => x.Attributes["class"]?.Value.Contains("entry-thumbnail")==true).FirstOrDefault();
+            string imgURL = ndBuf?.Descendants("img").FirstOrDefault()?.Attributes["src"]?.Value;
+            if (imgURL == null)
+            {
+                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoImageUri, pageUri);
+            }
+            else
+            {
+                if (this.imgURL.Count == 0)
+                    this.imgURL.Add(new VMContentAnswerPair());
+                OneOfPropInfo.SetValue(this.imgURL[0], imgURL);
+            }
             //* [2017-07-19 12:48] Get its bible's URL
             ndBuf = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("passage-box") == true).FirstOrDefault();
-            bibleURL = ndBuf?.Descendants("a").FirstOrDefault()?.Attributes["href"].Value;
+            string bibleURL = ndBuf?.Descendants("a").FirstOrDefault()?.Attributes["href"]?.Value;
+            if (bibleURL == null)
+            {
+                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoBibleUri, pageUri);
+            }
+            else
+            {
+                if (this.bibleURL.Count == 0)
+                    this.bibleURL.Add(new VMContentAnswerPair());
+                OneOfPropInfo.SetValue(this.bibleURL[0], bibleURL);
 
+                //* [2017-07-19 12:55] Get its bible's content
+                ObservableCollection<string> BibleContent = new ObservableCollection<string>();
+                await GetBibleContent(bibleURL, BibleContent);
+                for (int i0 = 0; i0 < BibleContent.Count; i0++)
+                {
+                    while (i0 >= this.BibleContent.Count)
+                        this.BibleContent.Add(new VMContentAnswerPair());
+                    OneOfPropInfo.SetValue(this.BibleContent[i0], BibleContent[i0]);
+                }
+            }
             //* [2017-07-06 17:28] Get its mp3's URL
-            ndBuf = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "download-mp3").FirstOrDefault();
-            mp3URL = ndBuf?.Descendants("a").FirstOrDefault()?.Attributes["href"]?.Value;
-            //* [2017-07-06 22:38] Get its content
-            var ndContent = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "entry-content").FirstOrDefault();
-            ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value == "post-content").FirstOrDefault();
-            GetContent(ndBuf, Content);
-            ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value == "poem-box").FirstOrDefault();
-            poem = ndBuf?.InnerText;
-            ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value == "thought-box").FirstOrDefault();
-            thought = ndBuf?.InnerText;
+            var nodes = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("download-mp3")==true);
 
-            //* [2017-07-19 12:55] Get its bible's content
-            GetBibleContent(bibleURL, BibleContent);
+            //ndBuf = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "download-mp3").FirstOrDefault();
+            int iMp3 = 0;
+            //var nodes = ndBuf?.Descendants("a");
+            foreach (var node in nodes)
+            {
+                bool isAnswer = OneOfPropInfo.Name.ToLower() == "answer";
+                var mp3Link = (isAnswer) ? this.answerMP3 : this.contentMp3;
+                string mp3URL = node.Descendants("a").FirstOrDefault()?.Attributes["href"]?.Value;
+                if(mp3URL != null)
+                {
+                    mp3Link.Add(new VMContentAnswerPair());
+                    mp3Link.Last().Content = "Audio " + (1 + iMp3).ToString();
+                    mp3Link.Last().Answer = mp3URL;
+                    if (mp3Link.Count == 1)
+                    {
+                        if (isAnswer)
+                            this.selAnswerMP3 = mp3Link[0];
+                        else
+                            this.selContentMP3 = mp3Link[0];
+                    }
+                    iMp3++;
+                }
+            }
+
+            //* [2017-07-06 22:38] Get values for MYC cards
+            var ndContent = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("entry-content")==true).FirstOrDefault();
+            if (ndContent == null)
+            {
+                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoContent,pageUri);
+            }
+            else
+            {
+                ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("post-content")==true).FirstOrDefault();
+                if (ndBuf == null)
+                {
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoPostContent, pageUri);
+                }
+                else
+                {
+                    ObservableCollection<string> Content = new ObservableCollection<string>();
+                    GetContent(ndBuf, Content);
+                    for (int i0 = 0; i0 < Content.Count; i0++)
+                    {
+                        while (i0 >= this.Content.Count)
+                            this.Content.Add(new VMContentAnswerPair());
+                        OneOfPropInfo.SetValue(this.Content[i0], Content[i0]);
+                    }
+                }
+                //** [2017-07-27 14:23] Get poem
+                ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("poem-box")==true).FirstOrDefault();
+                string poem = ndBuf?.InnerText;
+                if (poem == null)
+                {
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoPoem, pageUri);
+                }
+                else
+                {
+                    if (this.poem.Count == 0)
+                        this.poem.Add(new VMContentAnswerPair());
+                    OneOfPropInfo.SetValue(this.poem[0], poem);
+                }
+                //** [2017-07-27 14:23] Get thought
+                ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("thought-box")==true).FirstOrDefault();
+                string thought = ndBuf?.InnerText;
+                if (thought == null)
+                {
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoThought, pageUri);
+                }
+                else
+                {
+                    if (this.thought.Count == 0)
+                        this.thought.Add(new VMContentAnswerPair());
+                    OneOfPropInfo.SetValue(this.thought[0], thought);
+                }
+            }
+
+            p?.Invoke();
+            return;
         }
 
-        private async void GetBibleContent(string bibleURL, ObservableCollection<string> bibleContent)
+        private async Task GetBibleContent(string bibleURL, ObservableCollection<string> bibleContent)
         {
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(bibleURL);

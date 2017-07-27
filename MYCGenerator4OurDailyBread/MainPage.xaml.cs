@@ -22,10 +22,42 @@ namespace MYCGenerator4OurDailyBread
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public static MainPage Current;
+
+        public string stMsg
+        {
+            get { return (string)GetValue(stMsgProperty); }
+            set { SetValue(stMsgProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for stMsg.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty stMsgProperty =
+            DependencyProperty.Register("stMsg", typeof(string), typeof(MainPage), new PropertyMetadata(""));
+
+
+
+        public Visibility MsgVisibility
+        {
+            get { return (Visibility)GetValue(MsgVisibilityProperty); }
+            set { SetValue(MsgVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for MsgVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MsgVisibilityProperty =
+            DependencyProperty.Register("MsgVisibility", typeof(Visibility), typeof(MainPage), new PropertyMetadata(Visibility.Collapsed));
+
+
+
         public MainPage()
         {
             this.InitializeComponent();
+            Current = this;
             fmMain.Navigate(typeof(MYCGenerator.Pages.OurDailyBreadPage));
+        }
+
+        private void abMsgClose_Click(object sender, RoutedEventArgs e)
+        {
+            MsgVisibility = Visibility.Collapsed;
         }
     }
 }
