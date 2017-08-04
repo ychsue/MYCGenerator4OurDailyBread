@@ -22,12 +22,12 @@ namespace MYCGenerator.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        private VMCollection4Comparison _paragraph = new VMCollection4Comparison();
-        public VMCollection4Comparison paragraph
-        {
-            get { return _paragraph; }
-            set { _paragraph = value; NotifyPropertyChanged(); }
-        }
+        //private VMCollection4Comparison _paragraph = new VMCollection4Comparison();
+        //public VMCollection4Comparison paragraph
+        //{
+        //    get { return _paragraph; }
+        //    set { _paragraph = value; NotifyPropertyChanged(); }
+        //}
 
         private VMCollection4Comparison _mp3URLs = new VMCollection4Comparison();
         public VMCollection4Comparison mp3URLs
@@ -122,8 +122,10 @@ namespace MYCGenerator.ViewModels
             set { _Content = value; NotifyPropertyChanged(); }
         }
 
-        internal async void initialize(string stURL, PropertyInfo OneOfPropInfo, Func<object> p = null, object date = null)
+        internal async void initialize(string stURL, PropertyInfo OneOfPropInfo, Func<object> p = null,string stLangCode ="", object date = null)
         {
+            //* [2017-07-31 12:21] initialize strings
+            IniStrings(OneOfPropInfo);
             //* [2017-06-21 14:23] Follow the instruction of http://html-agility-pack.net/
             var web = new HtmlWeb();
             HtmlDocument doc;
@@ -154,6 +156,7 @@ namespace MYCGenerator.ViewModels
                 if (pageUri== null)
                 {
                     ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.CannotGetPageLink);
+                    pageUri = stURL;
                 }
             }
             //else //TODO ******************
@@ -178,7 +181,7 @@ namespace MYCGenerator.ViewModels
                 }
             }
 
-            string title = docNode.Descendants("h2")?.Where(x => x.Attributes["class"]?.Value.Contains("entry-title")==true).FirstOrDefault()?.InnerText;
+            string title = docNode.Descendants("h2")?.Where(x => x.Attributes["class"]?.Value.Contains("entry-title")==true).FirstOrDefault()?.InnerText.Trim();
             if (title == null)
             {
                 ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoTitle, pageUri);
@@ -187,19 +190,21 @@ namespace MYCGenerator.ViewModels
             {
                 if (this.title.Count == 0)
                     this.title.Add(new VMContentAnswerPair());
-                OneOfPropInfo.SetValue(this.title[0], title);
+                OneOfPropInfo.SetValue(this.title[0], WebUtility.HtmlDecode(title));
             }
             //* [2017-07-06 17:11] Get its image
             ndBuf = docNode.Descendants("figure").Where(x => x.Attributes["class"]?.Value.Contains("entry-thumbnail")==true).FirstOrDefault();
+            if (this.imgURL.Count == 0)
+                this.imgURL.Add(new VMContentAnswerPair());
             string imgURL = ndBuf?.Descendants("img").FirstOrDefault()?.Attributes["src"]?.Value;
-            if (imgURL == null)
+            if (imgURL == null || imgURL =="")
             {
                 ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoImageUri, pageUri);
             }
             else
             {
-                if (this.imgURL.Count == 0)
-                    this.imgURL.Add(new VMContentAnswerPair());
+                if (imgURL.IndexOf("http") != 0)
+                    imgURL = "https:" + imgURL;
                 OneOfPropInfo.SetValue(this.imgURL[0], imgURL);
             }
             //* [2017-07-19 12:48] Get its bible's URL
@@ -211,13 +216,15 @@ namespace MYCGenerator.ViewModels
             }
             else
             {
+                if (bibleURL != "" && bibleURL.IndexOf("http") != 0)
+                    bibleURL = "http:" + bibleURL;
                 if (this.bibleURL.Count == 0)
                     this.bibleURL.Add(new VMContentAnswerPair());
                 OneOfPropInfo.SetValue(this.bibleURL[0], bibleURL);
 
                 //* [2017-07-19 12:55] Get its bible's content
                 ObservableCollection<string> BibleContent = new ObservableCollection<string>();
-                await GetBibleContent(bibleURL, BibleContent);
+                await GetBibleContent(bibleURL,stLangCode, BibleContent);
                 for (int i0 = 0; i0 < BibleContent.Count; i0++)
                 {
                     while (i0 >= this.BibleContent.Count)
@@ -226,16 +233,19 @@ namespace MYCGenerator.ViewModels
                 }
             }
             //* [2017-07-06 17:28] Get its mp3's URL
-            var nodes = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("download-mp3")==true);
+            //var nodes = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("download-mp3")==true);      *****************
 
             //ndBuf = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "download-mp3").FirstOrDefault();
             int iMp3 = 0;
+            bool isAnswer = OneOfPropInfo.Name.ToLower() == "answer";
+            var mp3Link = (isAnswer) ? this.answerMP3 : this.contentMp3;
+            mp3Link.Clear(); //Initialize it.
             //var nodes = ndBuf?.Descendants("a");
+            var nodes = docNode.Descendants("audio");
             foreach (var node in nodes)
             {
-                bool isAnswer = OneOfPropInfo.Name.ToLower() == "answer";
-                var mp3Link = (isAnswer) ? this.answerMP3 : this.contentMp3;
-                string mp3URL = node.Descendants("a").FirstOrDefault()?.Attributes["href"]?.Value;
+                //string mp3URL = node.Descendants("a").FirstOrDefault()?.Attributes["href"]?.Value;
+                string mp3URL = node.Attributes["src"]?.Value;
                 if(mp3URL != null)
                 {
                     mp3Link.Add(new VMContentAnswerPair());
@@ -287,7 +297,7 @@ namespace MYCGenerator.ViewModels
                 {
                     if (this.poem.Count == 0)
                         this.poem.Add(new VMContentAnswerPair());
-                    OneOfPropInfo.SetValue(this.poem[0], poem);
+                    OneOfPropInfo.SetValue(this.poem[0], WebUtility.HtmlDecode(poem));
                 }
                 //** [2017-07-27 14:23] Get thought
                 ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("thought-box")==true).FirstOrDefault();
@@ -300,7 +310,7 @@ namespace MYCGenerator.ViewModels
                 {
                     if (this.thought.Count == 0)
                         this.thought.Add(new VMContentAnswerPair());
-                    OneOfPropInfo.SetValue(this.thought[0], thought);
+                    OneOfPropInfo.SetValue(this.thought[0], WebUtility.HtmlDecode(thought));
                 }
             }
 
@@ -308,16 +318,79 @@ namespace MYCGenerator.ViewModels
             return;
         }
 
-        private async Task GetBibleContent(string bibleURL, ObservableCollection<string> bibleContent)
+        private void IniStrings(PropertyInfo oneOfPropInfo)
+        {
+            foreach (var item in this.BibleContent)
+            {
+                oneOfPropInfo.SetValue(item, "");
+            }
+            foreach (var item in this.bibleURL)
+            {
+                oneOfPropInfo.SetValue(item, "");
+            }
+            foreach (var item in this.Content)
+            {
+                oneOfPropInfo.SetValue(item, "");
+            }
+            foreach (var item in this.imgURL)
+            {
+                oneOfPropInfo.SetValue(item, "/Assets/StoreLogo.png");  // Give it a default image
+            }
+            foreach (var item in this.pageURL)
+            {
+                oneOfPropInfo.SetValue(item, "");
+            }
+            foreach (var item in this.poem)
+            {
+                oneOfPropInfo.SetValue(item, "");
+            }
+            foreach (var item in this.thought)
+            {
+                oneOfPropInfo.SetValue(item, "");
+            }
+            foreach (var item in this.title)
+            {
+                oneOfPropInfo.SetValue(item, "");
+            }
+        }
+
+        private async Task GetBibleContent(string bibleURL,string stLangCode ,ObservableCollection<string> bibleContent)
         {
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(bibleURL);
             doc.OptionOutputOriginalCase = true;
-            var textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("text-html") == true);
-            foreach (var node in textNodes)
+            IEnumerable<HtmlNode> textNodes = new List<HtmlNode>();
+            if (stLangCode == "ms")
             {
-                UpdateBibleContentByEachNode(node,bibleContent);
+                textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("verse-outter") == true);
             }
+            else
+            //* [2017-07-29 16:21] For zh-TW, zh-CN & en-US
+            {
+                textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("text-html") == true);
+                if (textNodes.Count() == 0)
+                {
+                    var ndsBuf = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "container");
+                    if (ndsBuf.Count() > 0)
+                    {
+                        var ndBuf = ndsBuf?.FirstOrDefault();
+                        if (ndsBuf.Count() > 1)
+                            ndBuf = ndsBuf.ElementAt(1);
+                        textNodes = new List<HtmlNode>();
+                        if (ndBuf != null)
+                            ((List<HtmlNode>)textNodes).Add(ndBuf);
+                    }
+                    else
+                    {
+                        textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "texts"); //For Bahasa Indonesia
+                    }
+                }
+            }
+
+                foreach (var node in textNodes)
+                {
+                    UpdateBibleContentByEachNode(node, bibleContent);
+                }
         }
 
         private void UpdateBibleContentByEachNode(HtmlNode node, ObservableCollection<string> bibleContent)
@@ -328,12 +401,21 @@ namespace MYCGenerator.ViewModels
             {
                 inode.InnerHtml = "";
             }
+            foreach (var inode in node.Descendants("div").Where(x => x.Attributes["class"]?.Value == "font-btn" || x.Attributes["class"]?.Value.Contains("hidden")==true || x.Attributes["id"]?.Value=="ChapterSidebar"))
+            {
+                inode.InnerHtml = "";
+            }
 
             //* [2017-07-20 10:02] Get each verse ended before a "number"
             bool isNum = false;
             foreach (var inode in node.Descendants())
             {
-                if (inode.Attributes["class"]?.Value.Contains("num") == true)
+                var value = inode.Attributes["class"]?.Value;
+                if (
+                    (value?.Contains("num") == true || value?.Contains("verse") == true || value=="vref" || 
+                    (inode.Name=="sup" && inode.Attributes["data-reactid"]!=null)
+                    ) 
+                    && value!="passage-verse-wrap") //"vref" for Bahasa Indonesia
                 {
                     isNum = true;
                     if (stBuf.Trim() != "")
@@ -351,7 +433,7 @@ namespace MYCGenerator.ViewModels
                         stBuf += "\n";
                     }
                 }
-                else if (inode.Attributes["class"]?.Value.Contains("footnotes") == true)
+                else if (value?.ToLower().Contains("footnotes") == true || value?.ToLower().Contains("footer") == true)
                     break;
             }
 
@@ -360,42 +442,32 @@ namespace MYCGenerator.ViewModels
 
         }
 
-        private void GetContent(HtmlNode ndBuf, ObservableCollection<string> todayContent1)
+        private void GetContent(HtmlNode node, ObservableCollection<string> Contents)
         {
-            //* [2017-07-07 09:32] Ignore #text before the first <p>
-            var currentNode = ndBuf.FirstChild;
-            while (currentNode?.Name != "p")
-            {
-                currentNode = currentNode.NextSibling;
-            }
-            //* [2017-07-07 09:37] Get the content
             string stBuf = "";
-            do
+            //* [2017-08-02 10:12] Clean the tweet part
+            foreach (var item in node.Descendants("div").Where(x =>x.Attributes["class"]?.Value.Contains("tweet")==true))
             {
-                //** [2017-07-07 09:43] Check whether it is a <p> node
-                if (currentNode.Name == "p")
+                item.InnerHtml = "";
+            }
+            foreach (var innerNode in node.Descendants())
+            {
+                if(innerNode.Name=="p" || innerNode.Name == "br")
                 {
-                    //*** [2017-07-07 11:15] Dump stBuf
+                    stBuf = stBuf.Trim();
                     if (stBuf != "")
-                    {
-                        if(stBuf.Trim()!="")
-                            todayContent1.Add(stBuf); //Store the accumulated one
-                        stBuf = ""; //Initailize this buffer again
-                    }
-                    //*** [2017-07-07 11:16] Dump <p>'s innerText if it is not ""
-                    if (currentNode.InnerText != "")
-                        todayContent1.Add(currentNode.InnerText);
+                        Contents.Add(WebUtility.HtmlDecode(stBuf));
+                    stBuf = "";
                 }
-                else
+                else if(innerNode.Name=="#text")
                 {
-                    if (currentNode.Name != "div") //Skip tweetable-content one
-                    {
-                        stBuf += currentNode.InnerText;
-                    }
+                    stBuf += innerNode.InnerText;
                 }
+            }
 
-                currentNode = currentNode.NextSibling;
-            } while (currentNode != null);
+            if (stBuf.Trim() != "")
+                Contents.Add(WebUtility.HtmlDecode(stBuf));
+            stBuf = "";
         }
 
     }

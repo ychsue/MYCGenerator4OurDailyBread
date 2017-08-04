@@ -8,6 +8,8 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="Grid_SizeChanged">
+        <MediaElement x:Name="meCont" AutoPlay="False"></MediaElement>
+        <MediaElement x:Name="meAns" AutoPlay="False"></MediaElement>
         <Grid x:Name="gdTemp">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -39,54 +41,70 @@
                         <!--#region 1.1 For Content-->
                         <StackPanel Grid.Column="0" Margin="4">
                             <TextBlock Text="Content" HorizontalAlignment="Center"/>
-                            <ComboBox HorizontalAlignment="Center" ItemsSource="{Binding langCodes, ElementName=page}"
-                            SelectedItem="{Binding contentLangCode, ElementName=page, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding View}"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <ComboBox ItemsSource="{Binding langCodes, ElementName=page}"
+                            SelectedItem="{Binding contentLangCode, ElementName=page, Mode=TwoWay}" Margin="4">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding View}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                
+                                <RadioButton x:Name="rbContRun" IsChecked="{Binding ElementName=page,Path=isContentGet, Converter={StaticResource NotBool}}" Visibility="Collapsed" ></RadioButton>
+
+                                <AppBarButton x:Name="abContentRefresh" Icon="Refresh" Click="abContentRefresh_Click" Visibility="{Binding ElementName=page, Path=isContentGet, Converter={StaticResource BToV}}"></AppBarButton>
+                                <ProgressRing Margin="4"  Visibility="{Binding IsChecked,ElementName=rbContRun,Converter={StaticResource BToV}}" IsActive="{Binding ElementName=page, Path=isContentGet, Converter={StaticResource NotBool}}"></ProgressRing>
+                            </StackPanel>
                             <TextBlock Margin="4" FontSize="{StaticResource ContentDialogTitleMaxHeight}" HorizontalAlignment="Center" TextWrapping="Wrap"
                             Text="{Binding ourDailyBread.title[0].Content, ElementName=page}"/>
-                            <Image Margin="4" HorizontalAlignment="Center"
-                            Source="{Binding ourDailyBread.imgURL[0].Content, ElementName=page}"/>
+                            <Image x:Name="imgContent" Margin="4" HorizontalAlignment="Center"
+                            Source="{Binding ourDailyBread.imgURL[0].Content, ElementName=page}" Tapped="imgContent_Tapped" MaxHeight="200"/>
                             <StackPanel Orientation="Horizontal">
-                                <ListView ItemsSource="{Binding ourDailyBread.contentMp3,ElementName=page}" SelectedItem="{Binding ourDailyBread.selContentMP3,ElementName=page, Mode=TwoWay}">
+                                <ListView x:Name="lvContMP3" ItemsSource="{Binding ourDailyBread.contentMp3,ElementName=page}" SelectedItem="{Binding ourDailyBread.selContentMP3,ElementName=page, Mode=TwoWay}" SelectionChanged="lvContMP3_SelectionChanged">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Content}"></TextBlock>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>
-                                <AppBarButton Icon="Play"/>
+                                <AppBarButton x:Name="abContPlay" Icon="Play" Click="abContPlay_Click"/>
+                                <AppBarButton x:Name="abContPause" Icon="Pause" Click="abContPause_Click"></AppBarButton>
                             </StackPanel>
                         </StackPanel>
                         <!--#endregion 1.1 For Content-->
                         <!--#region 1.2 For Answer-->
                         <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="Answer" HorizontalAlignment="Center"/>
-                            <ComboBox HorizontalAlignment="Center" ItemsSource="{Binding langCodes, ElementName=page}"
-                            SelectedItem="{Binding answerLangCode, ElementName=page, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding View}"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <ComboBox ItemsSource="{Binding langCodes, ElementName=page}"
+                            SelectedItem="{Binding answerLangCode, ElementName=page, Mode=TwoWay}" Margin="4">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding View}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <RadioButton x:Name="rbAnsRun" IsChecked="{Binding ElementName=page,Path=isAnsGet, Converter={StaticResource NotBool}}" Visibility="Collapsed" ></RadioButton>
+
+                                <AppBarButton x:Name="abAnswerRefresh" Icon="Refresh" Click="abAnswerRefresh_Click" Visibility="{Binding ElementName=page, Path=isAnsGet, Converter={StaticResource BToV}}"></AppBarButton>
+                                <ProgressRing Margin="4"  Visibility="{Binding IsChecked,ElementName=rbAnsRun,Converter={StaticResource BToV}}" IsActive="{Binding ElementName=rbAnsRun, Path=IsChecked}"></ProgressRing>
+                            </StackPanel>
                             <TextBlock Margin="4" FontSize="{StaticResource ContentDialogTitleMaxHeight}" HorizontalAlignment="Center" TextWrapping="Wrap"
                             Text="{Binding ourDailyBread.title[0].Answer, ElementName=page}"/>
-                            <Image Margin="4" HorizontalAlignment="Center"
-                            Source="{Binding ourDailyBread.imgURL[0].Answer, ElementName=page}"/>
+                            <Image x:Name="imgAnswer" Margin="4" HorizontalAlignment="Center"
+                            Source="{Binding ourDailyBread.imgURL[0].Answer, ElementName=page}" Tapped="imgAnswer_Tapped" MaxHeight="200"/>
                             <StackPanel Orientation="Horizontal">
-                                <ListView ItemsSource="{Binding ourDailyBread.answerMP3,ElementName=page}"  SelectedItem="{Binding ourDailyBread.selAnswerMP3,ElementName=page, Mode=TwoWay}">
+                                <ListView x:Name="lvAnsMP3" ItemsSource="{Binding ourDailyBread.answerMP3,ElementName=page}"  SelectedItem="{Binding ourDailyBread.selAnswerMP3,ElementName=page, Mode=TwoWay}" SelectionChanged="lvAnsMP3_SelectionChanged">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Content}"></TextBlock>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>
-                                <AppBarButton Icon="Play"/>
+                                <AppBarButton x:Name="abAnsPlay" Icon="Play" Click="abAnsPlay_Click"/>
+                                <AppBarButton x:Name="abAnsPause" Icon="Pause" Click="abAnsPause_Click"></AppBarButton>
                             </StackPanel>
                         </StackPanel>
                         <!--#endregion 1.2 For Answer-->
@@ -177,4 +195,14 @@
             </ScrollViewer>
         </Grid>
     </Grid>
+    <Page.BottomAppBar>
+        <CommandBar IsOpen="True">
+            <AppBarButton Icon="Setting" Label="Settings"></AppBarButton>
+            <AppBarButton x:Name="abGenMYC" Label="Gen. MYC Cat.">
+                <AppBarButton.Content>
+                    <Image Source="/Assets/MYC.png"></Image>
+                </AppBarButton.Content>
+            </AppBarButton>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

@@ -18,7 +18,8 @@ namespace MYCGenerator4OurDailyBread.Helpers
             NoContent,
             NoPoem,
             NoThought,
-            NoPostContent
+            NoPostContent,
+            CannotGetYourSystemLang
         }
         public static void ShowErrorMsg(ErrorCode errCode,object para = null)
         {
@@ -75,6 +76,10 @@ namespace MYCGenerator4OurDailyBread.Helpers
                     pageUri = para as string;
                     content = pageUri + "\n I cannot get its post-content part";
                     title = Enum.GetName(typeof(ErrorCode), ErrorCode.NoPostContent);
+                    break;
+                case ErrorCode.CannotGetYourSystemLang:
+                    content = "I cannot get your system's default language. Very strange.";
+                    title = Enum.GetName(typeof(ErrorCode), ErrorCode.CannotGetYourSystemLang);
                     break;
                 default:
                     break;

@@ -3,6 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MYCGenerator4OurDailyBread"
+    xmlns:helper="using:MemorizeYC.Helpers"
     RequestedTheme="Light">
 
+    <Application.Resources>
+        <helper:BoolToVisibiltyConverter x:Key="BToV"></helper:BoolToVisibiltyConverter>
+        <helper:NotBoolConverter x:Key="NotBool"></helper:NotBoolConverter>
+    </Application.Resources>
 </Application>
