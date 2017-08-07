@@ -28,6 +28,17 @@ namespace MYCGenerator.ViewModels
             base.RemoveItem(index);
         }
 
+        protected override void ClearItems()
+        {
+            int num = this.Count;
+            for (int i0 = num-1; i0 >=0; i0--)
+            {
+                this.RemoveItem(i0);
+            }
+            Item_PropertyChanged(this, new PropertyChangedEventArgs("Clear")); //TODO
+            base.ClearItems();
+        }
+
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));

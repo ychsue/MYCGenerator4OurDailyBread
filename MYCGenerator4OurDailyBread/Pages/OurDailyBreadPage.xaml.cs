@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using MYCGenerator.ViewModels;
+using MYCGenerator4OurDailyBread.GlobalVariables;
 using MYCGenerator4OurDailyBread.Helpers;
 using MYCGenerator4OurDailyBread.ViewModels;
 using System;
@@ -13,6 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -21,6 +23,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage;
+using Windows.UI.Popups;
+using System.Net;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -104,6 +109,8 @@ namespace MYCGenerator.Pages
             set { SetValue(ourDailyBreadProperty, value); }
         }
 
+        public StorageFolder folder { get; private set; }
+
         // Using a DependencyProperty as the backing store for ourDailyBread.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ourDailyBreadProperty =
             DependencyProperty.Register("ourDailyBread", typeof(VM1OurDailyBread), typeof(OurDailyBreadPage), new PropertyMetadata(new VM1OurDailyBread()));
@@ -168,11 +175,6 @@ namespace MYCGenerator.Pages
                     answerLangCode = langCodes.Where(x => x.LangCode == "en-US").FirstOrDefault();
                 }
             }
-        }
-
-        private void btCreateMYC_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -258,6 +260,43 @@ namespace MYCGenerator.Pages
         private void abAnsPause_Click(object sender, RoutedEventArgs e)
         {
             meAns.Pause();
+        }
+
+        private async void abGenMYC_Click(object sender, RoutedEventArgs e)
+        {
+            prMain.IsActive = true;
+            //* [2017-08-04 10:04] Check whether MRU has a folder for it, then get it.
+            if (LocalSettingsHelper.CheckExistenceOfKey(GlobalVariables.MainFolderTokenKey) == false)
+            {
+                //** [2017-08-04 10:14] If not, get one and store it into MRU
+                folder = await FolderPickerHelper.GetAFolderAsync();
+                if (folder != null)
+                {
+                    string token = MRUHelper.AddAFolderIntoMRU(folder);
+                    LocalSettingsHelper.SetKeyValue(GlobalVariables.MainFolderTokenKey, token);
+                }
+            }
+            else
+            {
+                folder = await MRUHelper.GetAFolderBackAsync((string)LocalSettingsHelper.GetValueOfAKey(GlobalVariables.MainFolderTokenKey));
+            }
+
+            if(folder==null)
+            {
+                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.CannotGetTheFolder, "From OurDailyBreadPage:abGenMYC_Click:: ");
+                if (LocalSettingsHelper.CheckExistenceOfKey(GlobalVariables.MainFolderTokenKey) == true)
+                {
+                    MRUHelper.RemoveAFolderFromMRU(LocalSettingsHelper.GetValueOfAKey(GlobalVariables.MainFolderTokenKey) as string);
+                    LocalSettingsHelper.RemoveAKey(GlobalVariables.MainFolderTokenKey);
+                }
+            }
+            else
+            {
+                //** [2017-08-04 11:22] Since I can get the folder for containing MYContainers, let me make the whole container
+                await MYContainerHelper.CreateAContainer(folder, ourDailyBread);
+            }
+
+            prMain.IsActive = false;
         }
     }
 }

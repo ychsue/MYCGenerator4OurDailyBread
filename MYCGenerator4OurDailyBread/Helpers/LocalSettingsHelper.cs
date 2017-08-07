@@ -44,5 +44,37 @@ namespace MYCGenerator4OurDailyBread.Helpers
             ApplicationData.Current.LocalSettings.Values[ContLangKey] = stLang;
         }
 
+        internal static bool CheckExistenceOfKey(string key)
+        {
+            return ApplicationData.Current.LocalSettings.Values.Keys.Contains(key);
+        }
+
+        /// <summary>
+        /// If the token is "", it will not set its key value
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="token"></param>
+        internal static void SetKeyValue(string key, string token)
+        {
+            if (token == "")
+                return;
+            if (ApplicationData.Current.LocalSettings.Values.Keys.Contains(key))
+                ApplicationData.Current.LocalSettings.Values[key] = token;
+            else
+                ApplicationData.Current.LocalSettings.Values.Add(key, token);
+        }
+
+        internal static object GetValueOfAKey(string key)
+        {
+            if (ApplicationData.Current.LocalSettings.Values.Keys.Contains(key))
+                return ApplicationData.Current.LocalSettings.Values[key];
+            else
+                return null;
+        }
+
+        internal static void RemoveAKey(string key)
+        {
+            ApplicationData.Current.LocalSettings.Values.Remove(key);
+        }
     }
 }

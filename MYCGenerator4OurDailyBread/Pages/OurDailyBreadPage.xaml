@@ -15,13 +15,8 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid x:Name="gdContentTemp" Grid.Column="0" Grid.Row="0" Margin="12"></Grid>
-            <Grid x:Name="gdAnswerTemp" Grid.Column="1" Grid.Row="0" Margin="12"></Grid>
-            <Grid x:Name="gdMsgTemp" Grid.Column="0" Grid.Row="1" Margin="4"></Grid>
+            <Grid x:Name="gdContentTemp" Grid.Column="0" Margin="12"></Grid>
+            <Grid x:Name="gdAnswerTemp" Grid.Column="1" Margin="12"></Grid>
         </Grid>
         <Grid x:Name="gdMain">
             <Grid.RowDefinitions>
@@ -30,7 +25,7 @@
             </Grid.RowDefinitions>
             <ScrollViewer VerticalScrollMode="Auto">
                 <StackPanel>
-                    <DatePicker HorizontalAlignment="Center" Margin="4"/>
+                    <DatePicker Date="{Binding ourDailyBread.theDate,ElementName=page, Mode=TwoWay}" HorizontalAlignment="Center" Margin="4" IsEnabled="False"/>
 
                     <!--#region 1. Head-->
                     <Grid>
@@ -110,46 +105,6 @@
                         <!--#endregion 1.2 For Answer-->
                     </Grid>
                     <!--#endregion 1. Head-->
-                    <!--#region 2. Content List-->
-                    <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
-                        <StackPanel>
-                            <Grid>
-                                <Rectangle Fill="LightYellow"/>
-                                <TextBlock Text="Paragraph List" HorizontalAlignment="Center"/>
-                            </Grid>
-                            <ListView ItemsSource="{Binding ourDailyBread.Content, ElementName=page}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </StackPanel>
-                    </Border>
-                    <!--#endregion 2. Content List-->
-                    <!--#region 3. Poems-->
-                    <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
-                        <StackPanel>
-                            <Grid>
-                                <Rectangle Fill="LightYellow"/>
-                                <TextBlock Text="Poem" HorizontalAlignment="Center"/>
-                            </Grid>
-                            <ListView ItemsSource="{Binding ourDailyBread.poem, ElementName=page}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </StackPanel>
-                    </Border>
-                    <!--#endregion 3. Poems-->
                     <!--#region 4. Thoughts-->
                     <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
                         <StackPanel>
@@ -170,6 +125,27 @@
                         </StackPanel>
                     </Border>
                     <!--#endregion 4. Thoughts-->
+
+                    <!--#region 2. Content List-->
+                    <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
+                        <StackPanel>
+                            <Grid>
+                                <Rectangle Fill="LightYellow"/>
+                                <TextBlock Text="Paragraph List" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <ListView ItemsSource="{Binding ourDailyBread.Content, ElementName=page}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                    <!--#endregion 2. Content List-->
                     <!--#region 5. Bible Verses-->
                     <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
                         <StackPanel>
@@ -190,15 +166,38 @@
                         </StackPanel>
                     </Border>
                     <!--#endregion 5. Bible Verses-->
+                    <!--#region 3. Poems-->
+                    <Border BorderBrush="Blue" BorderThickness="2" CornerRadius="2" Margin="4">
+                        <StackPanel>
+                            <Grid>
+                                <Rectangle Fill="LightYellow"/>
+                                <TextBlock Text="Poem" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <ListView ItemsSource="{Binding ourDailyBread.poem, ElementName=page}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                    <!--#endregion 3. Poems-->
 
                 </StackPanel>
             </ScrollViewer>
         </Grid>
+        <Grid x:Name="gdProgress" Visibility="{Binding IsActive,ElementName=prMain, Converter={StaticResource BToV}}">
+            <ProgressRing x:Name="prMain"></ProgressRing>
+        </Grid>
     </Grid>
     <Page.BottomAppBar>
-        <CommandBar IsOpen="True">
+        <CommandBar>
             <AppBarButton Icon="Setting" Label="Settings"></AppBarButton>
-            <AppBarButton x:Name="abGenMYC" Label="Gen. MYC Cat.">
+            <AppBarButton x:Name="abGenMYC" Label="Gen. MYC Cat." Click="abGenMYC_Click">
                 <AppBarButton.Content>
                     <Image Source="/Assets/MYC.png"></Image>
                 </AppBarButton.Content>

@@ -22,13 +22,20 @@ namespace MYCGenerator.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        //private VMCollection4Comparison _paragraph = new VMCollection4Comparison();
-        //public VMCollection4Comparison paragraph
-        //{
-        //    get { return _paragraph; }
-        //    set { _paragraph = value; NotifyPropertyChanged(); }
-        //}
+        private DateTimeOffset _theDate = new DateTimeOffset(DateTime.Now);
+        public DateTimeOffset theDate
+        {
+            get { return _theDate; }
+            set { _theDate = value; NotifyPropertyChanged(); }
+        }
 
+        private VMCollection4Comparison _Language = new VMCollection4Comparison();
+        public VMCollection4Comparison Language
+        {
+            get { return _Language; }
+            set { _Language = value; NotifyPropertyChanged(); }
+        }
+        
         private VMCollection4Comparison _mp3URLs = new VMCollection4Comparison();
         public VMCollection4Comparison mp3URLs
         {
@@ -124,8 +131,17 @@ namespace MYCGenerator.ViewModels
 
         internal async void initialize(string stURL, PropertyInfo OneOfPropInfo, Func<object> p = null,string stLangCode ="", object date = null)
         {
+            bool isAnswer = OneOfPropInfo.Name.ToLower() == "answer";
             //* [2017-07-31 12:21] initialize strings
             IniStrings(OneOfPropInfo);
+            //* [2017-08-05 08:46] Add the langCode into this object
+            if (this.Language.Count == 0)
+                this.Language.Add(new VMContentAnswerPair());
+            if (isAnswer)
+                this.Language[0].Answer = stLangCode;
+            else
+                this.Language[0].Content = stLangCode;
+
             //* [2017-06-21 14:23] Follow the instruction of http://html-agility-pack.net/
             var web = new HtmlWeb();
             HtmlDocument doc;
@@ -237,7 +253,6 @@ namespace MYCGenerator.ViewModels
 
             //ndBuf = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "download-mp3").FirstOrDefault();
             int iMp3 = 0;
-            bool isAnswer = OneOfPropInfo.Name.ToLower() == "answer";
             var mp3Link = (isAnswer) ? this.answerMP3 : this.contentMp3;
             mp3Link.Clear(); //Initialize it.
             //var nodes = ndBuf?.Descendants("a");

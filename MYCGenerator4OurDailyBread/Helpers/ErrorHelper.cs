@@ -19,7 +19,10 @@ namespace MYCGenerator4OurDailyBread.Helpers
             NoPoem,
             NoThought,
             NoPostContent,
-            CannotGetYourSystemLang
+            CannotGetYourSystemLang,
+            CannotGetTheFolder,
+            CannotCreateTheFolder,
+            TheFolderDoesExist
         }
         public static void ShowErrorMsg(ErrorCode errCode,object para = null)
         {
@@ -78,8 +81,23 @@ namespace MYCGenerator4OurDailyBread.Helpers
                     title = Enum.GetName(typeof(ErrorCode), ErrorCode.NoPostContent);
                     break;
                 case ErrorCode.CannotGetYourSystemLang:
-                    content = "I cannot get your system's default language. Very strange.";
+                    content = "\n I cannot get your system's default language. Very strange.";
                     title = Enum.GetName(typeof(ErrorCode), ErrorCode.CannotGetYourSystemLang);
+                    break;
+                case ErrorCode.CannotGetTheFolder:
+                    pageUri = para as string;
+                    content = pageUri+"\n I cannot get the folder for MYContainers. You can set it by settings.";
+                    title = Enum.GetName(typeof(ErrorCode), ErrorCode.CannotGetTheFolder);
+                    break;
+                case ErrorCode.CannotCreateTheFolder:
+                    pageUri = para as string;
+                    content = pageUri + "\n I cannot create or get the folder for MYContainers. Maybe some characters of the name of the folder is not suitable.";
+                    title = Enum.GetName(typeof(ErrorCode), ErrorCode.CannotCreateTheFolder);
+                    break;
+                case ErrorCode.TheFolderDoesExist:
+                    pageUri = para as string;
+                    content = pageUri + "\n The folder does exist. If you want to make it does not exist, you can delete it from Windows File Explorer";
+                    title = Enum.GetName(typeof(ErrorCode), ErrorCode.CannotCreateTheFolder);
                     break;
                 default:
                     break;
