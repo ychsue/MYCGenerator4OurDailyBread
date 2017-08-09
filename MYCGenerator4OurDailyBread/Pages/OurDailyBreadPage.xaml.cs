@@ -26,6 +26,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
 using Windows.UI.Popups;
 using System.Net;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -101,8 +102,13 @@ namespace MYCGenerator.Pages
                 NotifyPropertyChanged(); }
         }
 
-
-
+        private string _bookshelfPath ="";
+        public string bookshelfPath
+        {
+            get { return _bookshelfPath; }
+            set { _bookshelfPath = value; NotifyPropertyChanged(); }
+        }
+        
         public VM1OurDailyBread ourDailyBread
         {
             get { return (VM1OurDailyBread)GetValue(ourDailyBreadProperty); }
@@ -110,6 +116,7 @@ namespace MYCGenerator.Pages
         }
 
         public StorageFolder folder { get; private set; }
+        
 
         // Using a DependencyProperty as the backing store for ourDailyBread.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ourDailyBreadProperty =
@@ -128,6 +135,7 @@ namespace MYCGenerator.Pages
             base.OnNavigatedTo(e);
             //* [2017-07-25 15:12] Set the language
             IniAllLangs();
+            IniBookshelfPath();
         }
 
         private void IniAllLangs()
@@ -268,13 +276,7 @@ namespace MYCGenerator.Pages
             //* [2017-08-04 10:04] Check whether MRU has a folder for it, then get it.
             if (LocalSettingsHelper.CheckExistenceOfKey(GlobalVariables.MainFolderTokenKey) == false)
             {
-                //** [2017-08-04 10:14] If not, get one and store it into MRU
-                folder = await FolderPickerHelper.GetAFolderAsync();
-                if (folder != null)
-                {
-                    string token = MRUHelper.AddAFolderIntoMRU(folder);
-                    LocalSettingsHelper.SetKeyValue(GlobalVariables.MainFolderTokenKey, token);
-                }
+                await PickAFolderAsABookshelfAsync();
             }
             else
             {
@@ -283,6 +285,7 @@ namespace MYCGenerator.Pages
 
             if(folder==null)
             {
+                bookshelfPath = "";
                 ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.CannotGetTheFolder, "From OurDailyBreadPage:abGenMYC_Click:: ");
                 if (LocalSettingsHelper.CheckExistenceOfKey(GlobalVariables.MainFolderTokenKey) == true)
                 {
@@ -292,9 +295,71 @@ namespace MYCGenerator.Pages
             }
             else
             {
+                bookshelfPath = folder.Path;
                 //** [2017-08-04 11:22] Since I can get the folder for containing MYContainers, let me make the whole container
                 await MYContainerHelper.CreateAContainer(folder, ourDailyBread);
             }
+
+            prMain.IsActive = false;
+        }
+
+        private async Task PickAFolderAsABookshelfAsync()
+        {
+            //** [2017-08-04 10:14] If not, get one and store it into MRU
+            folder = await FolderPickerHelper.GetAFolderAsync("Choose a folder as a bookshelf");
+            if (folder != null)
+            {
+                string token = MRUHelper.AddAFolderIntoMRU(folder);
+                LocalSettingsHelper.SetKeyValue(GlobalVariables.MainFolderTokenKey, token);
+            }
+        }
+
+        private async void IniBookshelfPath()
+        {
+            if (LocalSettingsHelper.CheckExistenceOfKey(GlobalVariables.MainFolderTokenKey) == true)
+            {
+                var folder = await MRUHelper.GetAFolderBackAsync((string)LocalSettingsHelper.GetValueOfAKey(GlobalVariables.MainFolderTokenKey));
+                if (folder == null)
+                {
+                    bookshelfPath = "";
+                    MRUHelper.RemoveAFolderFromMRU(LocalSettingsHelper.GetValueOfAKey(GlobalVariables.MainFolderTokenKey) as string);
+                    LocalSettingsHelper.RemoveAKey(GlobalVariables.MainFolderTokenKey);
+                }
+                else
+                    bookshelfPath = folder.Path;
+            }
+        }
+
+        private void ToggleSettings_Click(object sender, RoutedEventArgs e)
+        {
+            gdSettings.Visibility = (gdSettings.Visibility==Visibility.Collapsed)?Visibility.Visible:Visibility.Collapsed;
+        }
+
+        private async void btSetChange_Click(object sender, RoutedEventArgs e)
+        {
+            prMain.IsActive = true;
+            StorageFolder oldFolder = null;
+            //* [2017-08-07 15:42] Keep the original one in tmpFolder
+            if (LocalSettingsHelper.CheckExistenceOfKey(GlobalVariables.MainFolderTokenKey) == true)
+            {
+                oldFolder = await MRUHelper.GetAFolderBackAsync((string)LocalSettingsHelper.GetValueOfAKey(GlobalVariables.MainFolderTokenKey));
+                MRUHelper.RemoveAFolderFromMRU(LocalSettingsHelper.GetValueOfAKey(GlobalVariables.MainFolderTokenKey) as string);
+                LocalSettingsHelper.RemoveAKey(GlobalVariables.MainFolderTokenKey);
+                bookshelfPath = "";
+            }
+
+            //* [2017-08-07 15:43] Get the folder from folder picker
+            await PickAFolderAsABookshelfAsync();
+            if (folder == null && oldFolder != null)
+            {
+                string token = MRUHelper.AddAFolderIntoMRU(oldFolder);
+                LocalSettingsHelper.SetKeyValue(GlobalVariables.MainFolderTokenKey, token);
+                bookshelfPath = oldFolder.Path;
+            }
+            else if (folder != null)
+                bookshelfPath = folder.Path;
+            else
+                bookshelfPath = "";
 
             prMain.IsActive = false;
         }

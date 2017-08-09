@@ -10,10 +10,12 @@ namespace MYCGenerator4OurDailyBread.Helpers
 {
     public class FolderPickerHelper
     {
-        public static async Task<StorageFolder> GetAFolderAsync()
+        public static async Task<StorageFolder> GetAFolderAsync(string commitTxt="")
         {
             StorageFolder folder=null;
             var picker = new FolderPicker();
+            if (commitTxt != "")
+                picker.CommitButtonText = commitTxt;
             picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             picker.FileTypeFilter.Add(".json");
             folder = await picker.PickSingleFolderAsync();

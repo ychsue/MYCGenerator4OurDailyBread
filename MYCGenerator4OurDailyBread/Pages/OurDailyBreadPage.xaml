@@ -190,13 +190,26 @@
                 </StackPanel>
             </ScrollViewer>
         </Grid>
+        <Grid x:Name="gdSettings" Visibility="Collapsed">
+            <Rectangle Fill="Wheat" Opacity="0.9" Tapped="ToggleSettings_Click"></Rectangle>
+            <StackPanel Margin="4">
+                <Border BorderBrush="Blue" BorderThickness="4" CornerRadius="4">
+                    <StackPanel>
+                        <TextBlock Text="The folder as a bookshelf:" Margin="4"></TextBlock>
+                        <TextBlock Text="{Binding bookshelfPath,ElementName=page}" FontSize="20" TextWrapping="Wrap" Margin="4" Foreground="Blue"></TextBlock>
+                        <Button x:Name="btSetChange" Content="Change" Margin="4" Click="btSetChange_Click"></Button>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
         <Grid x:Name="gdProgress" Visibility="{Binding IsActive,ElementName=prMain, Converter={StaticResource BToV}}">
+            <Rectangle Fill="Yellow" Opacity="0.1"></Rectangle>
             <ProgressRing x:Name="prMain"></ProgressRing>
         </Grid>
     </Grid>
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton Icon="Setting" Label="Settings"></AppBarButton>
+            <AppBarButton Icon="Setting" Label="Settings" Click="ToggleSettings_Click"></AppBarButton>
             <AppBarButton x:Name="abGenMYC" Label="Gen. MYC Cat." Click="abGenMYC_Click">
                 <AppBarButton.Content>
                     <Image Source="/Assets/MYC.png"></Image>
