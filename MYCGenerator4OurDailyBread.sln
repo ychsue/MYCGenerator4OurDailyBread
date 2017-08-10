@@ -10,6 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE.txt = LICENSE.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrivacyPolicies", "PrivacyPolicies", "{214BE584-362A-45A9-B8DB-4CBA60B21488}"
+	ProjectSection(SolutionItems) = preProject
+		PrivacyPolicy.html = PrivacyPolicy.html
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM

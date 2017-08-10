@@ -1,4 +1,7 @@
-﻿## Before 7th Commit
+﻿## 9th Commit
+### [2017-08-10 15:21]
+Add in the Privacy Policy.
+## Before 7th Commit
 ### [2017-08-08 18:00]
 It has been submitted into Windows Store. Now, I want to submit it into GitHub.
 ### [2017-08-08 10:04]
