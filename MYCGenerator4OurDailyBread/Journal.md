@@ -1,4 +1,8 @@
-﻿## 13th Commit
+﻿# Version 2017.817.2.0
+## 14th Commit
+### [2017-08-17 21:01] 
+Submission 2 to Windows Store.
+## 13th Commit
 ### [2017-08-17 16:52]
 Added two new query parameters in its URI: bsid & bookshelf for MemorizeYC.  
 Besides, I also show its version at the top-right corner of setting page.
@@ -12,6 +16,7 @@ Using *binding.UpdateSource()* to update the binding of a TextBox because a Text
 By the way, I also set all the TextBoxes' *AcceptsReturn* Property to be true so that the user can input multiple lines now.
 ### [2017-08-17 14:14]
 Add a newline for a bibleContent when it encountered <br/>, \<p\> by checking *inode.Name* or \</p\> by checking *inode.PreviousSibling.Name*.
+# Version: 2017.808.1.0
 ## 9th & 10th Commit
 ### [2017-08-10 15:21]
 Add in the Privacy Policy.
@@ -41,4 +46,3 @@ set the default languages for content and answer based on the user's Language.
 ### [2017-08-02 10:59]
  Try to write a journal in this Journal.
 ## Start
-# Version: 2017.808.1.0

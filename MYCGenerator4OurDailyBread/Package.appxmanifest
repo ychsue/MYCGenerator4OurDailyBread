@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="48028Young-ChungHsue.MYCGeneratorforOurDailyBread" Publisher="CN=9879DB68-B579-4F0B-BE3D-881ECD7B1CCD" Version="2017.808.1.0" />
+  <Identity Name="48028Young-ChungHsue.MYCGeneratorforOurDailyBread" Publisher="CN=9879DB68-B579-4F0B-BE3D-881ECD7B1CCD" Version="2017.817.2.0" />
   <mp:PhoneIdentity PhoneProductId="51d39bcf-9d7f-4afa-b8a9-124a8f0b9c02" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>MYC Generator for Our Daily Bread</DisplayName>
