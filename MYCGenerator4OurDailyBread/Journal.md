@@ -1,4 +1,8 @@
-﻿## 11th Commit
+﻿## 12th Commit
+### [2017-08-17 16:04]
+Add in a parameter named IsIgnoreDueDate to tell MemorizeYC to ignore this Container if that App want to count the due date.
+At this moment, MemorizeYC is still out of this functionality.
+## 11th Commit
 ### [2017-08-17 14:29]
 Using *binding.UpdateSource()* to update the binding of a TextBox because a TextBox will not lose its Focus when the user click on a Button.  
 By the way, I also set all the TextBoxes' *AcceptsReturn* Property to be true so that the user can input multiple lines now.

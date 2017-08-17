@@ -69,6 +69,7 @@ namespace MYCGenerator4OurDailyBread.Helpers
                 numWCardShown = 100,
                 IsDictateTextContentInHint = true,
                 IsShownAsList = true,
+                IsIgnoreDueDate = true,
                 SynLang = ourDailyBread.Language[0].Answer,
                 ContentSynLang = ourDailyBread.Language[0].Content
             };

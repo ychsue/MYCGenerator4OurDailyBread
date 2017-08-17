@@ -27,7 +27,8 @@ namespace MemorizeYC.ViewModels.DescriptFiles
             IsDictateTextContentInHint, //* [2016-10-27 10:53] For all text content case
             IsDictateAnsInHint,
             ContentSynLang, //* [2017-06-20 13:56] For ContentSynLang
-            isAnsFirst      //* [2017-06-20 13:56] For ContentSynLang
+            isAnsFirst,      //* [2017-06-20 13:56] For ContentSynLang
+            IsIgnoreDueDate //* [2017-08-17 15:20] 
         }
         public enum CardEnum
         {
@@ -66,6 +67,12 @@ namespace MemorizeYC.ViewModels.DescriptFiles
         #region Save mySettings' infomation into MYCategoryJson
         public static void UpdateMYCategoryJsonByMySettings(JsonObject mYCategoryJson,ForPlayPageSettings mySettings, string synLang="en-US")
         {
+            //* [2017-08-17 15:30] Added for Dictating all TextContent and Shown as a list
+            string iKey = Enum.GetName(typeof(MYCategoryEnum), MYCategoryEnum.IsIgnoreDueDate);
+            if (mySettings.IsIgnoreDueDate == true)
+                mYCategoryJson.SetNamedValue(iKey, JsonValue.CreateBooleanValue(mySettings.IsIgnoreDueDate));
+            else
+                mYCategoryJson.Remove(iKey);
             //if (mySettings.BackgroundPath?.Length > 0)
             //{
             //    JsonObject jBG = MYCategoryJson.GetBackgroundJsonObj(mYCategoryJson);
@@ -83,7 +90,7 @@ namespace MemorizeYC.ViewModels.DescriptFiles
                 mYCategoryJson.SetNamedValue(numWCardShownKey,JsonValue.CreateNumberValue(mySettings.numWCardShown));
             }
             //* [2016-10-27 13:52] Added for Dictating all TextContent and Shown as a list
-            string iKey = Enum.GetName(typeof(MYCategoryEnum), MYCategoryEnum.IsDictateTextContentInHint);
+            iKey = Enum.GetName(typeof(MYCategoryEnum), MYCategoryEnum.IsDictateTextContentInHint);
             if (mySettings.IsDictateTextContentInHint)
                 mYCategoryJson.SetNamedValue(iKey, JsonValue.CreateBooleanValue(mySettings.IsDictateTextContentInHint));
             else

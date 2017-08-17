@@ -194,5 +194,14 @@ namespace MemorizeYC.ViewModels
 
 
         #endregion [2017-06-15 14:53] IsAnsFirst & ContentSynLang
+
+        private bool _IsIgnoreDueDate = false;
+        public bool IsIgnoreDueDate
+        {
+            get { return _IsIgnoreDueDate; }
+            set { _IsIgnoreDueDate = value; NotifyPropertyChanged(); }
+        }
+
+
     }
 }
