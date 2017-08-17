@@ -193,6 +193,7 @@
         <Grid x:Name="gdSettings" Visibility="Collapsed">
             <Rectangle Fill="Wheat" Opacity="0.9" Tapped="ToggleSettings_Click"></Rectangle>
             <StackPanel Margin="4">
+                <TextBlock Text="{Binding version, ElementName=page}" Margin="4" HorizontalAlignment="Right"></TextBlock>
                 <Border BorderBrush="Blue" BorderThickness="4" CornerRadius="4">
                     <StackPanel>
                         <TextBlock Text="The folder as a bookshelf:" Margin="4"></TextBlock>

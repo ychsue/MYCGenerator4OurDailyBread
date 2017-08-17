@@ -44,6 +44,13 @@ namespace MYCGenerator.Pages
         }
 
         #region     Binding Properties
+        private string _version="";
+        public string version
+        {
+            get { return _version; }
+            set { _version = value; NotifyPropertyChanged(); }
+        }
+        
         private VMODBLangCodes _langCodes;
         public VMODBLangCodes langCodes
         {
@@ -133,6 +140,9 @@ namespace MYCGenerator.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            //* [2017-08-17 16:32] Declare the version
+            var ver = Windows.ApplicationModel.Package.Current.Id.Version;
+            version = ver.Major + "." + ver.Minor + "." + ver.Build + "." + ver.Revision;
             //* [2017-07-25 15:12] Set the language
             IniAllLangs();
             IniBookshelfPath();

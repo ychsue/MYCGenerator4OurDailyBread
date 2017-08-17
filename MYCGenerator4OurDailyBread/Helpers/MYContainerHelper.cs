@@ -147,8 +147,11 @@ namespace MYCGenerator4OurDailyBread.Helpers
                     var options = new LauncherOptions();
                     options.TreatAsUntrusted = false;
                     options.TargetApplicationPackageFamilyName = "48028Young-ChungHsue.MemorizeYC_p5nsf55p85esy";
-                    Uri uri = new Uri("memorizeyc://EditPage/?myCont=" +
-                        folder.Path+"\\"+ stMYCont + "&myCat=" + stMYCat);
+                    Uri uri = new Uri("memorizeyc://EditPage/?"+
+                        "bsid="+"OurDailyBread"+
+                        "&bookshelf="+ folder.Path +
+                        "&myCont=" + stMYCont + 
+                        "&myCat=" + stMYCat);
                     await Launcher.LaunchUriAsync(uri, options);
                 }
                 ));

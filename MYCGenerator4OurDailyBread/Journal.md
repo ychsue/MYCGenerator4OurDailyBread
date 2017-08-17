@@ -1,4 +1,8 @@
-﻿## 12th Commit
+﻿## 13th Commit
+### [2017-08-17 16:52]
+Added two new query parameters in its URI: bsid & bookshelf for MemorizeYC.  
+Besides, I also show its version at the top-right corner of setting page.
+## 12th Commit
 ### [2017-08-17 16:04]
 Add in a parameter named IsIgnoreDueDate to tell MemorizeYC to ignore this Container if that App want to count the due date.
 At this moment, MemorizeYC is still out of this functionality.
