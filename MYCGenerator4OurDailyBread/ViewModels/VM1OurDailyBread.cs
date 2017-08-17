@@ -425,6 +425,10 @@ namespace MYCGenerator.ViewModels
             bool isNum = false;
             foreach (var inode in node.Descendants())
             {
+                //* [2017-08-17 13:17] Added to add a newline before <p> or after </p>
+                if ((inode.Name == "p" || inode.PreviousSibling?.Name == "p") && stBuf.Length > 0 && stBuf.Last() != '\n')
+                    stBuf += "\n";
+
                 var value = inode.Attributes["class"]?.Value;
                 if (
                     (value?.Contains("num") == true || value?.Contains("verse") == true || value=="vref" || 
@@ -438,6 +442,10 @@ namespace MYCGenerator.ViewModels
                         bibleContent.Add(WebUtility.HtmlDecode(stBuf.Trim()));
                         stBuf = "";
                     }
+                }
+                else if (inode.Name == "br")
+                {
+                    stBuf += "\n";
                 }
                 else if (inode.Name == "#text")
                 {

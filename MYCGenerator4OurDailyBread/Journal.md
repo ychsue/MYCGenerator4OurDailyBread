@@ -1,4 +1,10 @@
-﻿## 9th Commit
+﻿## 11th Commit
+### [2017-08-17 14:29]
+Using *binding.UpdateSource()* to update the binding of a TextBox because a TextBox will not lose its Focus when the user click on a Button.  
+By the way, I also set all the TextBoxes' *AcceptsReturn* Property to be true so that the user can input multiple lines now.
+### [2017-08-17 14:14]
+Add a newline for a bibleContent when it encountered <br/>, \<p\> by checking *inode.Name* or \</p\> by checking *inode.PreviousSibling.Name*.
+## 9th & 10th Commit
 ### [2017-08-10 15:21]
 Add in the Privacy Policy.
 ## Before 7th Commit

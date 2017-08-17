@@ -273,6 +273,13 @@ namespace MYCGenerator.Pages
         private async void abGenMYC_Click(object sender, RoutedEventArgs e)
         {
             prMain.IsActive = true;
+            //* [2017-08-17 14:19] To force the TextBox upadtes its binding data
+            var focusObj = FocusManager.GetFocusedElement();
+            if(focusObj!=null && focusObj is TextBox)
+            {
+                ((TextBox)focusObj).GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+            }
+
             //* [2017-08-04 10:04] Check whether MRU has a folder for it, then get it.
             if (LocalSettingsHelper.CheckExistenceOfKey(GlobalVariables.MainFolderTokenKey) == false)
             {

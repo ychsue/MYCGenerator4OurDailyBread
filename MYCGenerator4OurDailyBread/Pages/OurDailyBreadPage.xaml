@@ -116,8 +116,8 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -137,8 +137,8 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -157,8 +157,8 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -177,8 +177,8 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}"/>
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
