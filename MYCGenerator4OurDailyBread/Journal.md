@@ -1,4 +1,19 @@
-﻿# Version 2017.817.2.0
+﻿### [2017-08-30 15:57] Done 1.
+Need more test.
+### [2017-08-28 16:36]
+Now, it can show my user control UCAddRemoveItems whose 6 click events are declared in its OurDailyBreadPage.xaml and its NumPlusItems and NumMinusItems are setting as Dependency Properties so that I can bind them in two ways.
+### [2017-08-28 15:27] 
+Although new uwp should have support svg file as the source of an image control, it seems not in my case. So, I export them to be png files.
+### [2017-08-25 16:22] Inkscape
+Try and error, now the buttons' icons have been created.
+### [2017-08-25 11:15] Done 3.
+### [2017-08-25 10:43] Done 2.
+Yes, the listview will not be renewed once I change the texts inside a textbox. I can handle its collectionChanged event by hand now.
+### [2017-08-25 10:00] Try
+1. Try to let user can add or delete an item from one of the list.  Need to use Inkscape.
+2. Besides, let me try to avoid handling redundant collectionChanged event.  
+3. Fix the possible error gotten from empty content when she tries to generate a container for MemorizeYC.
+# Version 2017.817.2.0
 ## 14th Commit
 ### [2017-08-17 21:01] 
 Submission 2 to Windows Store.

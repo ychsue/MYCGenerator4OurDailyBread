@@ -284,12 +284,7 @@ namespace MYCGenerator.Pages
         {
             prMain.IsActive = true;
             //* [2017-08-17 14:19] To force the TextBox upadtes its binding data
-            var focusObj = FocusManager.GetFocusedElement();
-            if(focusObj!=null && focusObj is TextBox)
-            {
-                ((TextBox)focusObj).GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
-            }
-
+            TextBoxHelper.UpdateTextBinding();
             //* [2017-08-04 10:04] Check whether MRU has a folder for it, then get it.
             if (LocalSettingsHelper.CheckExistenceOfKey(GlobalVariables.MainFolderTokenKey) == false)
             {
@@ -380,5 +375,219 @@ namespace MYCGenerator.Pages
 
             prMain.IsActive = false;
         }
+
+        #region     Add And Remove Items from a listview
+        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var uiSender = sender as ListView;
+            if (uiSender == null)
+                return;
+            if (uiSender.SelectedIndex >= 0)
+            {
+                ucAddRemoveItem.SelectedListView = uiSender;
+                ucAddRemoveItem.Visibility = Visibility.Visible;
+            }
+        }
+
+        private VMCollection4Comparison ForWhichCollection(ListView lvSelected)
+        {
+            VMCollection4Comparison whichCollection;
+            if (lvSelected == lvThought)
+                whichCollection = ourDailyBread.thought;
+            else if (lvSelected == lvPoem)
+                whichCollection = ourDailyBread.poem;
+            else if (lvSelected == lvContent)
+                whichCollection = ourDailyBread.Content;
+            else if (lvSelected == lvBible)
+                whichCollection = ourDailyBread.BibleContent;
+            else
+            {
+                whichCollection = null;
+            }
+
+            return whichCollection;
+        }
+
+
+        private void ucAddRemoveItem_InsertAns_Click(object sender, RoutedEventArgs e)
+        {
+            prMain.IsActive = true;
+
+            ListView lvSelected = ucAddRemoveItem.SelectedListView;
+            int selIndex = lvSelected.SelectedIndex;
+            VMCollection4Comparison whichCollection = ForWhichCollection(lvSelected);
+            if (whichCollection != null && ucAddRemoveItem.NumPlusItems > 0)
+            {
+                //* [2017-08-28 17:03] Determine adding how many new pairs
+                ucAddRemoveItem.NumPlusItems = (ucAddRemoveItem.NumPlusItems < 0) ? 0 :
+                    (ucAddRemoveItem.NumPlusItems > GlobalVariables.MaxPlusNum) ? GlobalVariables.MaxPlusNum : ucAddRemoveItem.NumPlusItems;
+                int nadd = ucAddRemoveItem.NumPlusItems;
+                int ith;
+                for ( ith = whichCollection.Count-1; ith >= whichCollection.Count-ucAddRemoveItem.NumPlusItems && ith > selIndex; ith--)
+                {
+                    if (whichCollection[ith].Answer != "")
+                        break;
+                    nadd--;
+                }
+                //* [2017-08-29 20:21] Add nadd pairs
+                for (int i0 = 0; i0 < nadd; i0++)
+                {
+                    whichCollection.Add(new VMContentAnswerPair());
+                }
+                //* [2017-08-29 20:27] Begin to move
+                do
+                {
+                    whichCollection[ith + ucAddRemoveItem.NumPlusItems].Answer = whichCollection[ith].Answer;
+                    whichCollection[ith].Answer = "";
+                    ith--;
+                } while (ith >=selIndex);
+                //* [2017-08-29 20:32] Notify Collection Changed
+                whichCollection.NoticeCollectionChanged(this, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            }
+            prMain.IsActive = false;
+        }
+
+        private void ucAddRemoveItem_InsertCont_Click(object sender, RoutedEventArgs e)
+        {
+            prMain.IsActive = true;
+
+            ListView lvSelected = ucAddRemoveItem.SelectedListView;
+            int selIndex = lvSelected.SelectedIndex;
+            VMCollection4Comparison whichCollection = ForWhichCollection(lvSelected);
+            if (whichCollection != null && ucAddRemoveItem.NumPlusItems > 0)
+            {
+                //* [2017-08-28 17:03] Determine adding how many new pairs
+                ucAddRemoveItem.NumPlusItems = (ucAddRemoveItem.NumPlusItems < 0) ? 0 :
+                    (ucAddRemoveItem.NumPlusItems > GlobalVariables.MaxPlusNum) ? GlobalVariables.MaxPlusNum : ucAddRemoveItem.NumPlusItems;
+                int nadd = ucAddRemoveItem.NumPlusItems;
+                int ith;
+                for (ith = whichCollection.Count - 1; ith >= whichCollection.Count - ucAddRemoveItem.NumPlusItems && ith > selIndex; ith--)
+                {
+                    if (whichCollection[ith].Content != "")
+                        break;
+                    nadd--;
+                }
+                //* [2017-08-29 20:21] Add nadd pairs
+                for (int i0 = 0; i0 < nadd; i0++)
+                {
+                    whichCollection.Add(new VMContentAnswerPair());
+                }
+                //* [2017-08-29 20:27] Begin to move
+                do
+                {
+                    whichCollection[ith + ucAddRemoveItem.NumPlusItems].Content = whichCollection[ith].Content;
+                    whichCollection[ith].Content = "";
+                    ith--;
+                } while (ith >= selIndex);
+                //* [2017-08-29 20:32] Notify Collection Changed
+                whichCollection.NoticeCollectionChanged(this, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            }
+            prMain.IsActive = false;
+
+        }
+
+        private void ucAddRemoveItem_InsertPair_Click(object sender, RoutedEventArgs e)
+        {
+            prMain.IsActive = true;
+
+            ListView lvSelected = ucAddRemoveItem.SelectedListView;
+            int selIndex = lvSelected.SelectedIndex;
+            VMCollection4Comparison whichCollection = ForWhichCollection(lvSelected);
+            if (whichCollection != null && ucAddRemoveItem.NumPlusItems > 0)
+            {
+                //* [2017-08-28 17:03] Determine adding how many new pairs
+                ucAddRemoveItem.NumPlusItems = (ucAddRemoveItem.NumPlusItems < 0) ? 0 :
+                    (ucAddRemoveItem.NumPlusItems > GlobalVariables.MaxPlusNum) ? GlobalVariables.MaxPlusNum : ucAddRemoveItem.NumPlusItems;
+                int nadd = ucAddRemoveItem.NumPlusItems;
+                int ith;
+                for (ith = whichCollection.Count - 1; ith >= whichCollection.Count - ucAddRemoveItem.NumPlusItems && ith > selIndex; ith--)
+                {
+                    if ((whichCollection[ith].Content != "") || (whichCollection[ith].Answer != ""))
+                        break;
+                    nadd--;
+                }
+                //* [2017-08-29 20:21] Add nadd pairs
+                for (int i0 = 0; i0 < nadd; i0++)
+                {
+                    whichCollection.Add(new VMContentAnswerPair());
+                }
+                //* [2017-08-29 20:27] Begin to move
+                do
+                {
+                    whichCollection[ith + ucAddRemoveItem.NumPlusItems].Content = whichCollection[ith].Content;
+                    whichCollection[ith].Content = "";
+                    whichCollection[ith + ucAddRemoveItem.NumPlusItems].Answer = whichCollection[ith].Answer;
+                    whichCollection[ith].Answer = "";
+                    ith--;
+                } while (ith >= selIndex);
+                //* [2017-08-29 20:32] Notify Collection Changed
+                whichCollection.NoticeCollectionChanged(this, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            }
+            prMain.IsActive = false;
+
+        }
+
+        private void ucAddRemoveItem_DeleteAns_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteAction(sender, e);
+        }
+
+        private void ucAddRemoveItem_DeleteCont_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteAction(sender, e);
+        }
+
+        private void ucAddRemoveItem_DeletePair_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteAction(sender, e);
+        }
+
+        private void DeleteAction(object sender, RoutedEventArgs e)
+        {
+            prMain.IsActive = true;
+
+            var btn = sender as Button;
+            ListView lvSelected = ucAddRemoveItem.SelectedListView;
+            int selIndex = lvSelected.SelectedIndex;
+            VMCollection4Comparison whichCollection = ForWhichCollection(lvSelected);
+            //* [2017-8-30 15:04] Get a reasonable NumMinusItems value
+            int maxDelNum = whichCollection.Count - 1 - selIndex;
+            ucAddRemoveItem.NumMinusItems = (ucAddRemoveItem.NumMinusItems < 0) ? 0 :
+                (ucAddRemoveItem.NumMinusItems > maxDelNum) ? maxDelNum : ucAddRemoveItem.NumMinusItems;
+            if (ucAddRemoveItem.NumMinusItems > 0)
+            {
+                //* [2017-08-30 15:09] Begin To Move
+                int nDel = ucAddRemoveItem.NumMinusItems;
+                for (int i0 = selIndex; i0 < whichCollection.Count - nDel; i0++)
+                {
+                    if (btn.Name.ToLower().Contains("del"))
+                    {
+                        if (btn.Name.ToLower().Contains("cont") || btn.Name.ToLower().Contains("pair"))
+                        {
+                            whichCollection[i0].Content = whichCollection[i0 + nDel].Content;
+                            whichCollection[i0 + nDel].Content = "";
+                        }
+                        if (btn.Name.ToLower().Contains("ans") || btn.Name.ToLower().Contains("pair"))
+                        {
+                            whichCollection[i0].Answer = whichCollection[i0 + nDel].Answer;
+                            whichCollection[i0 + nDel].Answer = "";
+                        }
+                    }
+                }
+                //* [2017-08-30 15:13] Remove dummy pairs
+                var lastPair = whichCollection.LastOrDefault();
+                while (lastPair != null && lastPair.Answer == "" && lastPair.Content == "")
+                {
+                    whichCollection.Remove(lastPair);
+                    lastPair = whichCollection.LastOrDefault();
+                }
+                //* [2017-08-30 15:28] Notify Collection Changed
+                whichCollection.NoticeCollectionChanged(this, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            }
+
+            prMain.IsActive = false;
+        }
+        #endregion  Add And Remove Items from a listview
+
     }
 }

@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MYCGenerator.Pages"
+    xmlns:ucontrols="using:MYCGenerator4OurDailyBread.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -112,7 +113,7 @@
                                 <Rectangle Fill="LightYellow"/>
                                 <TextBlock Text="Thoughts" HorizontalAlignment="Center"/>
                             </Grid>
-                            <ListView ItemsSource="{Binding ourDailyBread.thought, ElementName=page}">
+                            <ListView x:Name="lvThought" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.thought, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -133,7 +134,7 @@
                                 <Rectangle Fill="LightYellow"/>
                                 <TextBlock Text="Paragraph List" HorizontalAlignment="Center"/>
                             </Grid>
-                            <ListView ItemsSource="{Binding ourDailyBread.Content, ElementName=page}">
+                            <ListView x:Name="lvContent" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.Content, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -153,7 +154,7 @@
                                 <Rectangle Fill="LightYellow"/>
                                 <TextBlock Text="Bible Verses" HorizontalAlignment="Center"/>
                             </Grid>
-                            <ListView ItemsSource="{Binding ourDailyBread.BibleContent, ElementName=page}">
+                            <ListView x:Name="lvBible" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.BibleContent, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -173,7 +174,7 @@
                                 <Rectangle Fill="LightYellow"/>
                                 <TextBlock Text="Poem" HorizontalAlignment="Center"/>
                             </Grid>
-                            <ListView ItemsSource="{Binding ourDailyBread.poem, ElementName=page}">
+                            <ListView x:Name="lvPoem" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.poem, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -190,6 +191,16 @@
                 </StackPanel>
             </ScrollViewer>
         </Grid>
+
+        <ucontrols:UCAddRemoveItems x:Name="ucAddRemoveItem" Visibility="Collapsed"
+                                    InsertAns_Click="ucAddRemoveItem_InsertAns_Click"
+                                    InsertCont_Click="ucAddRemoveItem_InsertCont_Click"
+                                    InsertPair_Click="ucAddRemoveItem_InsertPair_Click"
+                                    DeleteAns_Click="ucAddRemoveItem_DeleteAns_Click"
+                                    DeleteCont_Click="ucAddRemoveItem_DeleteCont_Click"
+                                    DeletePair_Click="ucAddRemoveItem_DeletePair_Click"
+                                    ></ucontrols:UCAddRemoveItems>
+        
         <Grid x:Name="gdSettings" Visibility="Collapsed">
             <Rectangle Fill="Wheat" Opacity="0.9" Tapped="ToggleSettings_Click"></Rectangle>
             <StackPanel Margin="4">

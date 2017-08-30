@@ -95,6 +95,10 @@ namespace MYCGenerator4OurDailyBread.Helpers
                 stContent = item.Content;
                 if (stAns == "" && stContent == "")
                     continue;
+                //**** [2017-08-25 11:05] to avoid a "" as a content or answer
+                stAns = (stAns == "") ? "none" : stAns;
+                stContent = (stContent == "") ? "none" : stContent;
+
                 ith++;
                 fileName = "S" + ith.ToString("00") + ". " + "thought.txt";
                 await DealWithACard(jCards, MYCategory, fileName, stContent, stAns, "");
@@ -106,6 +110,10 @@ namespace MYCGenerator4OurDailyBread.Helpers
                 stContent = item.Content;
                 if (stAns == "" && stContent == "")
                     continue;
+                //**** [2017-08-25 11:05] to avoid a "" as a content or answer
+                stAns = (stAns == "") ? "none" : stAns;
+                stContent = (stContent == "") ? "none" : stContent;
+
                 ith++;
                 fileName = "S" + ith.ToString("00") + ". " + "content.txt";
                 await DealWithACard(jCards, MYCategory, fileName, stContent, stAns, "");
@@ -117,6 +125,10 @@ namespace MYCGenerator4OurDailyBread.Helpers
                 stContent = item.Content;
                 if (stAns == "" && stContent == "")
                     continue;
+                //**** [2017-08-25 11:05] to avoid a "" as a content or answer
+                stAns = (stAns == "") ? "none" : stAns;
+                stContent = (stContent == "") ? "none" : stContent;
+
                 ith++;
                 fileName = "S" + ith.ToString("00") + ". " + "Bible verses.txt";
                 await DealWithACard(jCards, MYCategory, fileName, stContent, stAns, "");
@@ -128,6 +140,10 @@ namespace MYCGenerator4OurDailyBread.Helpers
                 stContent = item.Content;
                 if (stAns == "" && stContent == "")
                     continue;
+                //**** [2017-08-25 11:05] to avoid a "" as a content or answer
+                stAns = (stAns == "") ? "none" : stAns;
+                stContent = (stContent == "") ? "none" : stContent;
+
                 ith++;
                 fileName = "S" + ith.ToString("00") + ". " + "poem.txt";
                 await DealWithACard(jCards, MYCategory, fileName, stContent, stAns, "");

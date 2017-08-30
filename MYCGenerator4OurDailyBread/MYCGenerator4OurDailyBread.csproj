@@ -109,6 +109,7 @@
     <Compile Include="Helpers\MRUHelper.cs" />
     <Compile Include="Helpers\MYContainerHelper.cs" />
     <Compile Include="Helpers\StorageItemHelper.cs" />
+    <Compile Include="Helpers\TextBoxHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -116,6 +117,9 @@
       <DependentUpon>OurDailyBreadPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserControls\UCAddRemoveItems.xaml.cs">
+      <DependentUpon>UCAddRemoveItems.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\ForPlayPageSettings.cs" />
     <Compile Include="ViewModels\MYCategoryJson.cs" />
     <Compile Include="ViewModels\VM1OurDailyBread.cs" />
@@ -164,6 +168,18 @@
     <Content Include="Assets\AppList\AppList.targetsize-80_altform-unplated.png" />
     <Content Include="Assets\AppList\AppList.targetsize-96.png" />
     <Content Include="Assets\AppList\AppList.targetsize-96_altform-unplated.png" />
+    <Content Include="Assets\DeleteAContent.png" />
+    <Content Include="Assets\DeleteAContent.svg" />
+    <Content Include="Assets\DeleteAnAnswer.png" />
+    <Content Include="Assets\DeleteAnAnswer.svg" />
+    <Content Include="Assets\DeleteAPair.png" />
+    <Content Include="Assets\DeleteAPair.svg" />
+    <Content Include="Assets\InsertAContent.png" />
+    <Content Include="Assets\InsertAContent.svg" />
+    <Content Include="Assets\InsertAnAnswer.png" />
+    <Content Include="Assets\InsertAnAnswer.svg" />
+    <Content Include="Assets\InsertAPair.png" />
+    <Content Include="Assets\InsertAPair.svg" />
     <Content Include="Assets\Large\Large310x310Logo.scale-100.png" />
     <Content Include="Assets\Large\Large310x310Logo.scale-125.png" />
     <Content Include="Assets\Large\Large310x310Logo.scale-150.png" />
@@ -218,6 +234,10 @@
     <Page Include="Pages\OurDailyBreadPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UCAddRemoveItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

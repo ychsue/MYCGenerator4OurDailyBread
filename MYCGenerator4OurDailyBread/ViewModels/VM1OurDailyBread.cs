@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using MYCGenerator4OurDailyBread.Helpers;
+using System.Collections.Specialized;
 
 namespace MYCGenerator.ViewModels
 {
@@ -29,42 +30,42 @@ namespace MYCGenerator.ViewModels
             set { _theDate = value; NotifyPropertyChanged(); }
         }
 
-        private VMCollection4Comparison _Language = new VMCollection4Comparison();
+        private VMCollection4Comparison _Language = new VMCollection4Comparison() { doNotifyCollectionChangedWhenPropChanged = true };
         public VMCollection4Comparison Language
         {
             get { return _Language; }
             set { _Language = value; NotifyPropertyChanged(); }
         }
         
-        private VMCollection4Comparison _mp3URLs = new VMCollection4Comparison();
+        private VMCollection4Comparison _mp3URLs = new VMCollection4Comparison() { doNotifyCollectionChangedWhenPropChanged = true };
         public VMCollection4Comparison mp3URLs
         {
             get { return _mp3URLs; }
             set { _mp3URLs = value; NotifyPropertyChanged(); }
         }
 
-        private VMCollection4Comparison _pageURL = new VMCollection4Comparison();
+        private VMCollection4Comparison _pageURL = new VMCollection4Comparison() { doNotifyCollectionChangedWhenPropChanged = true };
         public VMCollection4Comparison pageURL
         {
             get { return _pageURL; }
             set { _pageURL = value; NotifyPropertyChanged(); }
         }
 
-        private VMCollection4Comparison _imgURL =new VMCollection4Comparison();
+        private VMCollection4Comparison _imgURL =new VMCollection4Comparison() { doNotifyCollectionChangedWhenPropChanged = true };
         public VMCollection4Comparison imgURL
         {
             get { return _imgURL; }
             set { _imgURL = value; NotifyPropertyChanged(); }
         }
 
-        private VMCollection4Comparison _title =new VMCollection4Comparison();
+        private VMCollection4Comparison _title =new VMCollection4Comparison() { doNotifyCollectionChangedWhenPropChanged = true };
         public VMCollection4Comparison title
         {
             get { return _title; }
             set { _title = value; NotifyPropertyChanged(); }
         }
 
-        private VMCollection4Comparison _contentMp3 = new VMCollection4Comparison();//Content: its #text, Answer: its Address
+        private VMCollection4Comparison _contentMp3 = new VMCollection4Comparison() { doNotifyCollectionChangedWhenPropChanged = true };//Content: its #text, Answer: its Address
         public VMCollection4Comparison contentMp3
         {
             get { return _contentMp3; }
@@ -78,7 +79,7 @@ namespace MYCGenerator.ViewModels
         }
 
 
-        private VMCollection4Comparison _answerMP3 = new VMCollection4Comparison();
+        private VMCollection4Comparison _answerMP3 = new VMCollection4Comparison() { doNotifyCollectionChangedWhenPropChanged = true };
         public VMCollection4Comparison answerMP3
         {
             get { return _answerMP3; }
@@ -94,7 +95,7 @@ namespace MYCGenerator.ViewModels
 
 
 
-        private VMCollection4Comparison _bibleURL = new VMCollection4Comparison();
+        private VMCollection4Comparison _bibleURL = new VMCollection4Comparison() { doNotifyCollectionChangedWhenPropChanged = true };
         public VMCollection4Comparison bibleURL
         {
             get { return _bibleURL; }
@@ -247,6 +248,8 @@ namespace MYCGenerator.ViewModels
                         this.BibleContent.Add(new VMContentAnswerPair());
                     OneOfPropInfo.SetValue(this.BibleContent[i0], BibleContent[i0]);
                 }
+                //* [2017-08-25 10:33] Notify that the bible content is changed
+                this.BibleContent.NoticeCollectionChanged(this.BibleContent, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
             //* [2017-07-06 17:28] Get its mp3's URL
             //var nodes = docNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("download-mp3")==true);      *****************
@@ -300,6 +303,8 @@ namespace MYCGenerator.ViewModels
                             this.Content.Add(new VMContentAnswerPair());
                         OneOfPropInfo.SetValue(this.Content[i0], Content[i0]);
                     }
+                    //* [2017-08-25 10:33] Notify that the content is changed
+                    this.Content.NoticeCollectionChanged(this.Content, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
                 //** [2017-07-27 14:23] Get poem
                 ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("poem-box")==true).FirstOrDefault();
@@ -313,6 +318,8 @@ namespace MYCGenerator.ViewModels
                     if (this.poem.Count == 0)
                         this.poem.Add(new VMContentAnswerPair());
                     OneOfPropInfo.SetValue(this.poem[0], WebUtility.HtmlDecode(poem));
+                    //* [2017-08-25 10:33] Notify that the poem is changed
+                    this.poem.NoticeCollectionChanged(this.poem, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
                 //** [2017-07-27 14:23] Get thought
                 ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("thought-box")==true).FirstOrDefault();
@@ -326,6 +333,8 @@ namespace MYCGenerator.ViewModels
                     if (this.thought.Count == 0)
                         this.thought.Add(new VMContentAnswerPair());
                     OneOfPropInfo.SetValue(this.thought[0], WebUtility.HtmlDecode(thought));
+                    //* [2017-08-25 10:33] Notify that the thought is changed
+                    this.thought.NoticeCollectionChanged(this.thought, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             }
 

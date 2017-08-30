@@ -9,5 +9,7 @@ namespace MYCGenerator4OurDailyBread.GlobalVariables
     public static class GlobalVariables
     {
         public const string MainFolderTokenKey = "MainFolderToken";
+
+        public const int MaxPlusNum = 10;
     }
 }

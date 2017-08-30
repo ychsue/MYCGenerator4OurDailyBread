@@ -13,6 +13,7 @@ namespace MYCGenerator.ViewModels
 {
     public class VMCollection4Comparison : ObservableCollection<VMContentAnswerPair> //, INotifyCollectionChanged
     {
+        public bool doNotifyCollectionChangedWhenPropChanged { get; set; } = false;
 
         public override event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -41,7 +42,13 @@ namespace MYCGenerator.ViewModels
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            if(doNotifyCollectionChangedWhenPropChanged)
+                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        public void NoticeCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            CollectionChanged?.Invoke(sender, e);
         }
     }
 
