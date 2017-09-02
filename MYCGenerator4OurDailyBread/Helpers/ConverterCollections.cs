@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MYCGenerator4OurDailyBread.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
 namespace MemorizeYC.Helpers
@@ -205,6 +207,92 @@ namespace MemorizeYC.Helpers
             }
             else
                 return DependencyProperty.UnsetValue;
+        }
+    }
+
+    public class ThicknessToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value.GetType() == typeof(Thickness) && targetType == typeof(string))
+            {
+                var margin = (Thickness)value;
+                return GetStringFromThickness(margin);
+            }
+            else
+                return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            if (value.GetType() == typeof(string))
+            {
+                Thickness margin = GetThicknessFromString((string)value);
+                return margin;
+            }
+            else
+                return LocalSettingsHelper.GetPairMargin();
+        }
+
+        public static Thickness GetThicknessFromString(string value, bool isDefault = false)
+        {
+            var split = value.Split(',');
+            double[] num = new double[4];
+            if (split.Length == 1 && double.TryParse(value, out num[0]))
+                return new Thickness(num[0]);
+            else if (split.Length == 4)
+            {
+                bool isAThickness = true;
+                for (int i0 = 0; i0 < 4; i0++)
+                {
+                    if (double.TryParse(split[i0], out num[i0]) == false)
+                    {
+                        isAThickness = false;
+                        break;
+                    }
+                }
+                if (isAThickness)
+                    return new Thickness(num[0], num[1], num[2], num[3]);
+                else
+                {
+                    if (isDefault)
+                        return LocalSettingsHelper.DefaultPairMargin;
+                    return LocalSettingsHelper.GetPairMargin();
+                }
+            }
+            else
+            {
+                if (isDefault)
+                    return LocalSettingsHelper.DefaultPairMargin;
+                return LocalSettingsHelper.GetPairMargin();
+            }
+        }
+
+        public static string GetStringFromThickness(Thickness margin)
+        {
+            if (margin.Bottom == margin.Top && margin.Top == margin.Left && margin.Left == margin.Right)
+                return margin.Bottom.ToString();
+            else
+                return margin.Left.ToString() + "," + margin.Top.ToString() + "," + margin.Right.ToString() + "," + margin.Bottom.ToString();
+        }
+    }
+
+    public class TrueToHorizontalOrientation : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value is bool && targetType == typeof(Orientation))
+                return ((bool)value) ? Orientation.Horizontal : Orientation.Vertical;
+            else
+                return (LocalSettingsHelper.GetIsHorizontalPair()) ? Orientation.Horizontal : Orientation.Vertical;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            if (value is Orientation && targetType == typeof(bool))
+                return (Orientation)value == Orientation.Horizontal;
+            else
+                return LocalSettingsHelper.GetIsHorizontalPair();
         }
     }
 }

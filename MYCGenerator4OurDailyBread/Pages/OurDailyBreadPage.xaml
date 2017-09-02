@@ -6,9 +6,14 @@
     xmlns:ucontrols="using:MYCGenerator4OurDailyBread.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:helper="using:MemorizeYC.Helpers"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="Grid_SizeChanged">
+    <Page.Resources>
+        <helper:ThicknessToStringConverter x:Key="Thick2St"></helper:ThicknessToStringConverter>
+        <helper:TrueToHorizontalOrientation x:Key="B2O"></helper:TrueToHorizontalOrientation>
+    </Page.Resources>
+    <Grid x:Name="gdPage" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="gdPage_SizeChanged">
         <MediaElement x:Name="meCont" AutoPlay="False"></MediaElement>
         <MediaElement x:Name="meAns" AutoPlay="False"></MediaElement>
         <Grid x:Name="gdTemp">
@@ -52,8 +57,8 @@
                                 <AppBarButton x:Name="abContentRefresh" Icon="Refresh" Click="abContentRefresh_Click" Visibility="{Binding ElementName=page, Path=isContentGet, Converter={StaticResource BToV}}"></AppBarButton>
                                 <ProgressRing Margin="4"  Visibility="{Binding IsChecked,ElementName=rbContRun,Converter={StaticResource BToV}}" IsActive="{Binding ElementName=page, Path=isContentGet, Converter={StaticResource NotBool}}"></ProgressRing>
                             </StackPanel>
-                            <TextBlock Margin="4" FontSize="{StaticResource ContentDialogTitleMaxHeight}" HorizontalAlignment="Center" TextWrapping="Wrap"
-                            Text="{Binding ourDailyBread.title[0].Content, ElementName=page}"/>
+                            <TextBlock Margin="4" HorizontalAlignment="Center" TextWrapping="Wrap"
+                            Text="{Binding ourDailyBread.title[0].Content, ElementName=page}" FontSize="{Binding TitleFontSize,ElementName=page}"/>
                             <Image x:Name="imgContent" Margin="4" HorizontalAlignment="Center"
                             Source="{Binding ourDailyBread.imgURL[0].Content, ElementName=page}" Tapped="imgContent_Tapped" MaxHeight="200"/>
                             <StackPanel Orientation="Horizontal">
@@ -87,7 +92,7 @@
                                 <AppBarButton x:Name="abAnswerRefresh" Icon="Refresh" Click="abAnswerRefresh_Click" Visibility="{Binding ElementName=page, Path=isAnsGet, Converter={StaticResource BToV}}"></AppBarButton>
                                 <ProgressRing Margin="4"  Visibility="{Binding IsChecked,ElementName=rbAnsRun,Converter={StaticResource BToV}}" IsActive="{Binding ElementName=rbAnsRun, Path=IsChecked}"></ProgressRing>
                             </StackPanel>
-                            <TextBlock Margin="4" FontSize="{StaticResource ContentDialogTitleMaxHeight}" HorizontalAlignment="Center" TextWrapping="Wrap"
+                            <TextBlock Margin="4" FontSize="{Binding TitleFontSize,ElementName=page}" HorizontalAlignment="Center" TextWrapping="Wrap"
                             Text="{Binding ourDailyBread.title[0].Answer, ElementName=page}"/>
                             <Image x:Name="imgAnswer" Margin="4" HorizontalAlignment="Center"
                             Source="{Binding ourDailyBread.imgURL[0].Answer, ElementName=page}" Tapped="imgAnswer_Tapped" MaxHeight="200"/>
@@ -116,9 +121,9 @@
                             <ListView x:Name="lvThought" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.thought, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
+                                        <StackPanel Orientation="{Binding IsHorizontalPair,Converter={StaticResource B2O}, ElementName=page}" Margin="{Binding PairMargin,ElementName=page}">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True" FontSize="{Binding CommonFontSize,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True" FontSize="{Binding CommonFontSize,ElementName=page}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -137,9 +142,9 @@
                             <ListView x:Name="lvContent" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.Content, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
+                                        <StackPanel Orientation="{Binding IsHorizontalPair,Converter={StaticResource B2O}, ElementName=page}" Margin="{Binding PairMargin,ElementName=page}">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True" FontSize="{Binding CommonFontSize,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" TextWrapping="Wrap" Margin="4" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True" FontSize="{Binding CommonFontSize,ElementName=page}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -157,9 +162,9 @@
                             <ListView x:Name="lvBible" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.BibleContent, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
+                                        <StackPanel Orientation="{Binding IsHorizontalPair,Converter={StaticResource B2O}, ElementName=page}" Margin="{Binding PairMargin,ElementName=page}">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True" FontSize="{Binding CommonFontSize,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True" FontSize="{Binding CommonFontSize,ElementName=page}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -177,9 +182,9 @@
                             <ListView x:Name="lvPoem" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.poem, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
-                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True"/>
+                                        <StackPanel Orientation="{Binding IsHorizontalPair,Converter={StaticResource B2O}, ElementName=page}" Margin="{Binding PairMargin,ElementName=page}">
+                                            <TextBox Text="{Binding Content, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True" FontSize="{Binding CommonFontSize,ElementName=page}"/>
+                                            <TextBox Text="{Binding Answer, Mode=TwoWay}" Margin="4" TextWrapping="Wrap" Width="{Binding idealPairWidth,ElementName=page}" AcceptsReturn="True" FontSize="{Binding CommonFontSize,ElementName=page}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -204,14 +209,48 @@
         <Grid x:Name="gdSettings" Visibility="Collapsed">
             <Rectangle Fill="Wheat" Opacity="0.9" Tapped="ToggleSettings_Click"></Rectangle>
             <StackPanel Margin="4">
+                <!--#region set.version-->
                 <TextBlock Text="{Binding version, ElementName=page}" Margin="4" HorizontalAlignment="Right"></TextBlock>
-                <Border BorderBrush="Blue" BorderThickness="4" CornerRadius="4">
+                <!--#endregion set.version-->
+                <!--#region set.bookshelf-->
+                <Border BorderBrush="Blue" BorderThickness="4" CornerRadius="4" Margin="4">
                     <StackPanel>
-                        <TextBlock Text="The folder as a bookshelf:" Margin="4"></TextBlock>
+                        <Grid>
+                            <Rectangle Fill="Blue"></Rectangle>
+                            <TextBlock Text="BookShelf folder" HorizontalAlignment="Center" Foreground="White"></TextBlock>
+                        </Grid>
                         <TextBlock Text="{Binding bookshelfPath,ElementName=page}" FontSize="20" TextWrapping="Wrap" Margin="4" Foreground="Blue"></TextBlock>
                         <Button x:Name="btSetChange" Content="Change" Margin="4" Click="btSetChange_Click"></Button>
                     </StackPanel>
                 </Border>
+                <!--#endregion set.bookshelf-->
+                <!--#region set.View-->
+                <Border BorderBrush="Blue" BorderThickness="4" CornerRadius="4" Margin="4">
+                    <StackPanel>
+                        <Grid>
+                            <Rectangle Fill="Blue"></Rectangle>
+                            <TextBlock Text="View" HorizontalAlignment="Center" Foreground="White"></TextBlock>
+                        </Grid>
+                        <Grid Margin="4">
+                            <TextBlock Text="Title Font Size:"></TextBlock>
+                            <TextBox HorizontalAlignment="Right" InputScope="Number" Text="{Binding TitleFontSize,ElementName=page, Mode=TwoWay}"></TextBox>
+                        </Grid>
+                        <Grid Margin="4">
+                            <TextBlock Text="Font Size:"></TextBlock>
+                            <TextBox HorizontalAlignment="Right" InputScope="Number" Text="{Binding CommonFontSize,ElementName=page, Mode=TwoWay}"></TextBox>
+                        </Grid>
+                        <Grid Margin="4">
+                            <TextBlock Text="Horizontal Pair:"></TextBlock>
+                            <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding IsHorizontalPair,ElementName=page,Mode=TwoWay}"/>
+                        </Grid>
+                        <Grid Margin="4">
+                            <TextBlock Text="Pair's Margin:"></TextBlock>
+                            <TextBox HorizontalAlignment="Right" InputScope="Number" Text="{Binding PairMargin,ElementName=page, Mode=TwoWay,Converter={StaticResource Thick2St}}"></TextBox>
+                        </Grid>
+                        <Button x:Name="btSetViewDefault" Content="Default" Margin="4" Click="btSetViewDefault_Click"></Button>
+                    </StackPanel>
+                </Border>
+                <!--#endregion set.View-->
             </StackPanel>
         </Grid>
         <Grid x:Name="gdProgress" Visibility="{Binding IsActive,ElementName=prMain, Converter={StaticResource BToV}}">

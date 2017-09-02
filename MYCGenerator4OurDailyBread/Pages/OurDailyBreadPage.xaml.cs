@@ -27,6 +27,7 @@ using Windows.Storage;
 using Windows.UI.Popups;
 using System.Net;
 using System.Threading.Tasks;
+using MemorizeYC.Helpers;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -131,6 +132,8 @@ namespace MYCGenerator.Pages
 
         #endregion      Binding Properties
 
+        public OurDailyBreadPage Current = null;
+
         public OurDailyBreadPage()
         {
             this.InitializeComponent();
@@ -140,6 +143,7 @@ namespace MYCGenerator.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            Current = this;
             //* [2017-08-17 16:32] Declare the version
             var ver = Windows.ApplicationModel.Package.Current.Id.Version;
             version = ver.Major + "." + ver.Minor + "." + ver.Build + "." + ver.Revision;
@@ -195,9 +199,18 @@ namespace MYCGenerator.Pages
             }
         }
 
-        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void gdPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            idealPairWidth = e.NewSize.Width / 2 - 24;
+            UpdateIdealPairWidth(e.NewSize.Width);
+        }
+
+        public void UpdateIdealPairWidth(double width)
+        {
+            var bufWidth = width - PairMargin.Left - PairMargin.Right - 48;
+            if (IsHorizontalPair)
+                idealPairWidth = bufWidth / 2;
+            else
+                idealPairWidth = bufWidth;
         }
 
         private void abContentRefresh_Click(object sender, RoutedEventArgs e)
@@ -558,25 +571,27 @@ namespace MYCGenerator.Pages
             {
                 //* [2017-08-30 15:09] Begin To Move
                 int nDel = ucAddRemoveItem.NumMinusItems;
-                for (int i0 = selIndex; i0 < whichCollection.Count - nDel; i0++)
+                for (int i0 = selIndex; i0 < whichCollection.Count; i0++)
                 {
                     if (btn.Name.ToLower().Contains("del"))
                     {
                         if (btn.Name.ToLower().Contains("cont") || btn.Name.ToLower().Contains("pair"))
                         {
-                            whichCollection[i0].Content = whichCollection[i0 + nDel].Content;
-                            whichCollection[i0 + nDel].Content = "";
+                            var buf = ((i0 + nDel) < whichCollection.Count) ? whichCollection[i0 + nDel].Content : "";
+                            whichCollection[i0].Content = buf;
+                            //whichCollection[i0 + nDel].Content = "";
                         }
                         if (btn.Name.ToLower().Contains("ans") || btn.Name.ToLower().Contains("pair"))
                         {
-                            whichCollection[i0].Answer = whichCollection[i0 + nDel].Answer;
-                            whichCollection[i0 + nDel].Answer = "";
+                            var buf = ((i0 + nDel) < whichCollection.Count) ? whichCollection[i0 + nDel].Answer : "";
+                            whichCollection[i0].Answer = buf;
+                            //whichCollection[i0 + nDel].Answer = "";
                         }
                     }
                 }
                 //* [2017-08-30 15:13] Remove dummy pairs
                 var lastPair = whichCollection.LastOrDefault();
-                while (lastPair != null && lastPair.Answer == "" && lastPair.Content == "")
+                while (whichCollection.Count > (selIndex+1) && lastPair != null && lastPair.Answer == "" && lastPair.Content == "")
                 {
                     whichCollection.Remove(lastPair);
                     lastPair = whichCollection.LastOrDefault();
@@ -589,5 +604,119 @@ namespace MYCGenerator.Pages
         }
         #endregion  Add And Remove Items from a listview
 
+        #region     Settings.View
+        
+        public double TitleFontSize
+        {
+            get { return (double)GetValue(TitleFontSizeProperty); }
+            set {
+                if(value > 4)
+                {
+                    SetValue(TitleFontSizeProperty, value);
+                }
+        }
+        }
+
+        // Using a DependencyProperty as the backing store for TitleFontSize.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TitleFontSizeProperty =
+            DependencyProperty.Register("TitleFontSize", typeof(double), typeof(OurDailyBreadPage), new PropertyMetadata(LocalSettingsHelper.GetTitleFontSize(),
+                (d, e) =>
+                {
+                    if ((double)e.NewValue > 4)
+                    {
+                        LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.TitleFontSizeKey, e.NewValue);
+                    }
+                }
+                ));
+
+
+
+        public double CommonFontSize
+        {
+            get { return (double)GetValue(CommonFontSizeProperty); }
+            set
+            {
+                if (value > 4)
+                {
+                    SetValue(CommonFontSizeProperty, value);
+                }
+            }
+        }
+
+        // Using a DependencyProperty as the backing store for CommonFontSize.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CommonFontSizeProperty =
+            DependencyProperty.Register("CommonFontSize", typeof(double), typeof(OurDailyBreadPage), new PropertyMetadata(LocalSettingsHelper.GetCommonFontSize(),
+                (d, e) =>
+                {
+                    if ((double)e.NewValue > 4)
+                    {
+                        LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.CommonFontSizeKey, e.NewValue);
+                    }
+                }
+                ));
+
+
+
+        //public bool IsHorizontalPair
+        //{
+        //    get { return (bool)GetValue(IsHorizontalPairProperty); }
+        //    set { SetValue(IsHorizontalPairProperty, value); }
+        //}
+
+        //// Using a DependencyProperty as the backing store for IsHorizontalPair.  This enables animation, styling, binding, etc...
+        //public static readonly DependencyProperty IsHorizontalPairProperty =
+        //    DependencyProperty.Register("IsHorizontalPair", typeof(bool), typeof(OurDailyBreadPage), new PropertyMetadata(LocalSettingsHelper.GetIsHorizontalPair(),
+        //        (d, e) =>
+        //        {
+        //            LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.IsHorizontalPairKey, e.NewValue);
+        //            OurDailyBreadPage.Current.UpdateIdealPairWidth(Window.Current.Bounds.Width);
+        //        }
+        //        ));
+        private bool _IsHorizontalPair = LocalSettingsHelper.GetIsHorizontalPair();
+        public bool IsHorizontalPair
+        {
+            get { return _IsHorizontalPair; }
+            set {
+                _IsHorizontalPair = value;
+                LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.IsHorizontalPairKey, value);
+                UpdateIdealPairWidth(gdPage.ActualWidth);
+                NotifyPropertyChanged(); }
+        }
+
+
+        //public Thickness PairMargin
+        //{
+        //    get { return (Thickness)GetValue(PairMarginProperty); }
+        //    set { SetValue(PairMarginProperty, value); }
+        //}
+
+        //// Using a DependencyProperty as the backing store for PairMargin.  This enables animation, styling, binding, etc...
+        //public static readonly DependencyProperty PairMarginProperty =
+        //    DependencyProperty.Register("PairMargin", typeof(Thickness), typeof(OurDailyBreadPage), 
+        //        new PropertyMetadata(LocalSettingsHelper.GetPairMargin(), 
+        //        (d,e) => {
+        //            LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.PairMarginKey, ThicknessToStringConverter.GetStringFromThickness((Thickness)e.NewValue));
+        //        }));
+        private Thickness _PairMargin = LocalSettingsHelper.GetPairMargin();
+        public Thickness PairMargin
+        {
+            get { return _PairMargin; }
+            set { _PairMargin = value;
+                LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.PairMarginKey, ThicknessToStringConverter.GetStringFromThickness(value));
+                UpdateIdealPairWidth(gdPage.ActualWidth);
+                NotifyPropertyChanged(); }
+        }
+
+
+
+        #endregion  Settings.View
+
+        private void btSetViewDefault_Click(object sender, RoutedEventArgs e)
+        {
+            TitleFontSize = LocalSettingsHelper.DefaultTitleFontSize;
+            CommonFontSize = LocalSettingsHelper.DefaultCommonFontSize;
+            IsHorizontalPair = LocalSettingsHelper.DefaultIsHorizontalPair;
+            PairMargin = LocalSettingsHelper.DefaultPairMargin;
+        }
     }
 }

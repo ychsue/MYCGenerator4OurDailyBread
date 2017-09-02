@@ -1,4 +1,16 @@
-﻿### [2017-08-30 15:57] Done 1.
+﻿## 16th Commit
+### [2017-09-02 19:23]
+The Click event for Default values of view's settings has been provided. Testing.
+### [2017-09-02 19:17]
+The view's settings worked fine. Keep testing.
+### [2017-09-01 17:15]
+Well, LocalSettings just accept the generic type of data. Therefore, I cannot store an object with type of Thickness.
+### [2017-08-31 20:57]
+Let me add settings for 'View'
+### [2017-08-31 20:55]
+OurDailyBreadPage: Fix bugs for Delete a pair.
+## 15th Commit
+### [2017-08-30 15:57] Done 1.
 Need more test.
 ### [2017-08-28 16:36]
 Now, it can show my user control UCAddRemoveItems whose 6 click events are declared in its OurDailyBreadPage.xaml and its NumPlusItems and NumMinusItems are setting as Dependency Properties so that I can bind them in two ways.
