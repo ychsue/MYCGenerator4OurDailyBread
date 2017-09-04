@@ -1,4 +1,6 @@
-﻿## 17th Commit
+﻿# Version 2017.904.3.0
+### [2017-09-03 17:05] Sumbitted & 18th Commit
+## 17th Commit
 ### [2017-09-03 19:34] Solved.
 Found a problem. If the user input too large FontSize, it will freeze the Windows 10.  
 Therefore, I added a testing before it notified the changing.  
