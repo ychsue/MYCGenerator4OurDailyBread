@@ -605,73 +605,67 @@ namespace MYCGenerator.Pages
         #endregion  Add And Remove Items from a listview
 
         #region     Settings.View
-        
+
+        private double _TitleFontSize = LocalSettingsHelper.GetTitleFontSize();
         public double TitleFontSize
         {
-            get { return (double)GetValue(TitleFontSizeProperty); }
-            set {
-                if(value > 4)
-                {
-                    SetValue(TitleFontSizeProperty, value);
-                }
-        }
-        }
-
-        // Using a DependencyProperty as the backing store for TitleFontSize.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TitleFontSizeProperty =
-            DependencyProperty.Register("TitleFontSize", typeof(double), typeof(OurDailyBreadPage), new PropertyMetadata(LocalSettingsHelper.GetTitleFontSize(),
-                (d, e) =>
-                {
-                    if ((double)e.NewValue > 4)
-                    {
-                        LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.TitleFontSizeKey, e.NewValue);
-                    }
-                }
-                ));
-
-
-
-        public double CommonFontSize
-        {
-            get { return (double)GetValue(CommonFontSizeProperty); }
+            get {
+                if (_TitleFontSize == double.NaN || _TitleFontSize < 4 || _TitleFontSize > 50)
+                    _TitleFontSize = LocalSettingsHelper.DefaultTitleFontSize;
+                return _TitleFontSize; }
             set
             {
-                if (value > 4)
+                if (value < 4)
                 {
-                    SetValue(CommonFontSizeProperty, value);
+                    ShowInvalidValueMsg((a) => { TitleFontSize = LocalSettingsHelper.DefaultTitleFontSize; });
+                }
+                else if (value > 50)
+                {
+                    ShowInvalidValueMsg((a) => { TitleFontSize = LocalSettingsHelper.DefaultTitleFontSize; });
+                }
+                else
+                {
+                    _TitleFontSize = value;
+                    LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.TitleFontSizeKey, value);
+                    NotifyPropertyChanged();
                 }
             }
         }
 
-        // Using a DependencyProperty as the backing store for CommonFontSize.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty CommonFontSizeProperty =
-            DependencyProperty.Register("CommonFontSize", typeof(double), typeof(OurDailyBreadPage), new PropertyMetadata(LocalSettingsHelper.GetCommonFontSize(),
-                (d, e) =>
+        private double _CommonFontSize = LocalSettingsHelper.GetCommonFontSize();
+        public double CommonFontSize
+        {
+            get {
+                if (_CommonFontSize == double.NaN || _CommonFontSize < 4 || _CommonFontSize > 50)
+                    _CommonFontSize = LocalSettingsHelper.DefaultCommonFontSize;
+                return _CommonFontSize; }
+            set
+            {
+                if (value < 4)
                 {
-                    if ((double)e.NewValue > 4)
-                    {
-                        LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.CommonFontSizeKey, e.NewValue);
-                    }
+                    ShowInvalidValueMsg((a) => { CommonFontSize = LocalSettingsHelper.DefaultCommonFontSize; });
                 }
-                ));
+                else if (value > 50)
+                {
+                    ShowInvalidValueMsg((a) => { CommonFontSize = LocalSettingsHelper.DefaultCommonFontSize; });
+                }
+                else
+                {
+                    _CommonFontSize = value;
+                    LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.CommonFontSizeKey, value);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
+        private async void ShowInvalidValueMsg(UICommandInvokedHandler action)
+        {
+            var dialog = new MessageDialog("Invalid input");
+            dialog.Commands.Add(
+                new UICommand("OK", action));
+            await dialog.ShowAsync();
+        }
 
-
-        //public bool IsHorizontalPair
-        //{
-        //    get { return (bool)GetValue(IsHorizontalPairProperty); }
-        //    set { SetValue(IsHorizontalPairProperty, value); }
-        //}
-
-        //// Using a DependencyProperty as the backing store for IsHorizontalPair.  This enables animation, styling, binding, etc...
-        //public static readonly DependencyProperty IsHorizontalPairProperty =
-        //    DependencyProperty.Register("IsHorizontalPair", typeof(bool), typeof(OurDailyBreadPage), new PropertyMetadata(LocalSettingsHelper.GetIsHorizontalPair(),
-        //        (d, e) =>
-        //        {
-        //            LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.IsHorizontalPairKey, e.NewValue);
-        //            OurDailyBreadPage.Current.UpdateIdealPairWidth(Window.Current.Bounds.Width);
-        //        }
-        //        ));
         private bool _IsHorizontalPair = LocalSettingsHelper.GetIsHorizontalPair();
         public bool IsHorizontalPair
         {
@@ -683,28 +677,24 @@ namespace MYCGenerator.Pages
                 NotifyPropertyChanged(); }
         }
 
-
-        //public Thickness PairMargin
-        //{
-        //    get { return (Thickness)GetValue(PairMarginProperty); }
-        //    set { SetValue(PairMarginProperty, value); }
-        //}
-
-        //// Using a DependencyProperty as the backing store for PairMargin.  This enables animation, styling, binding, etc...
-        //public static readonly DependencyProperty PairMarginProperty =
-        //    DependencyProperty.Register("PairMargin", typeof(Thickness), typeof(OurDailyBreadPage), 
-        //        new PropertyMetadata(LocalSettingsHelper.GetPairMargin(), 
-        //        (d,e) => {
-        //            LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.PairMarginKey, ThicknessToStringConverter.GetStringFromThickness((Thickness)e.NewValue));
-        //        }));
         private Thickness _PairMargin = LocalSettingsHelper.GetPairMargin();
         public Thickness PairMargin
         {
             get { return _PairMargin; }
-            set { _PairMargin = value;
-                LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.PairMarginKey, ThicknessToStringConverter.GetStringFromThickness(value));
-                UpdateIdealPairWidth(gdPage.ActualWidth);
-                NotifyPropertyChanged(); }
+            set
+            {
+                if (((value.Left + value.Right) > Window.Current.Bounds.Width * 0.8) || value.Top > Window.Current.Bounds.Height / 2 || value.Bottom > Window.Current.Bounds.Height / 2)
+                {
+                    ShowInvalidValueMsg((a) => { PairMargin = LocalSettingsHelper.DefaultPairMargin; });
+                }
+                else
+                {
+                    _PairMargin = value;
+                    LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.PairMarginKey, ThicknessToStringConverter.GetStringFromThickness(value));
+                    UpdateIdealPairWidth(gdPage.ActualWidth);
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
 

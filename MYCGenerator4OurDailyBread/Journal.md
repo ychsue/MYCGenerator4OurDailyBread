@@ -1,4 +1,13 @@
-﻿## 16th Commit
+﻿## 17th Commit
+### [2017-09-03 19:34] Solved.
+Found a problem. If the user input too large FontSize, it will freeze the Windows 10.  
+Therefore, I added a testing before it notified the changing.  
+However, the text in the UIControl did not change when I changed it to a reasonable value.
+#### [2017-09-03 22:08]
+I force it to show a *MessageDialog* when the user's input is invalid and then reset the value when the user click its button. So, the value is changed by that MessageDialog not by the property itself.
+## 16th Commit
+### [2017-09-02]
+[This article](https://stackoverflow.com/questions/20080902/dependency-property-assigned-with-value-binding-does-not-work) teachs me how to run a command when a DependencyProperty is changed. However, that command should be a static one so that I cannot use something like **SomeUIControl.Property** to get or set their values. 
 ### [2017-09-02 19:23]
 The Click event for Default values of view's settings has been provided. Testing.
 ### [2017-09-02 19:17]
