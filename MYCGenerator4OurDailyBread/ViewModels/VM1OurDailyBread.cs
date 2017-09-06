@@ -233,6 +233,10 @@ namespace MYCGenerator.ViewModels
             }
             else
             {
+                //* [2017-09-06 15:42] Correction for German's bible
+                if (stLangCode.ToLower() == "de")
+                    bibleURL = bibleURL.Replace("%2C", "%3A");
+
                 if (bibleURL != "" && bibleURL.IndexOf("http") != 0)
                     bibleURL = "http:" + bibleURL;
                 if (this.bibleURL.Count == 0)

@@ -1,4 +1,12 @@
-﻿# Version 2017.904.3.0
+﻿# Version 2017.906.3.0
+## 19th Commit
+### [2017-09-06 16:41]
+The problems are fixed.
+### [2017-09-06 15:13] Fixed
+Found two problems.  
+1. The ':' in the search for bible verses in German one will be input as ',' so that its result will be wrong.
+2. The textBox's binding will not update automatically when I click the buttons to insert or remove items. 
+# Version 2017.904.3.0
 ### [2017-09-03 17:05] Sumbitted & 18th Commit
 ## 17th Commit
 ### [2017-09-03 19:34] Solved.

@@ -426,6 +426,8 @@ namespace MYCGenerator.Pages
         {
             prMain.IsActive = true;
 
+            TextBoxHelper.UpdateTextBinding();
+
             ListView lvSelected = ucAddRemoveItem.SelectedListView;
             int selIndex = lvSelected.SelectedIndex;
             VMCollection4Comparison whichCollection = ForWhichCollection(lvSelected);
@@ -463,6 +465,8 @@ namespace MYCGenerator.Pages
         private void ucAddRemoveItem_InsertCont_Click(object sender, RoutedEventArgs e)
         {
             prMain.IsActive = true;
+
+            TextBoxHelper.UpdateTextBinding();
 
             ListView lvSelected = ucAddRemoveItem.SelectedListView;
             int selIndex = lvSelected.SelectedIndex;
@@ -502,6 +506,8 @@ namespace MYCGenerator.Pages
         private void ucAddRemoveItem_InsertPair_Click(object sender, RoutedEventArgs e)
         {
             prMain.IsActive = true;
+
+            TextBoxHelper.UpdateTextBinding();
 
             ListView lvSelected = ucAddRemoveItem.SelectedListView;
             int selIndex = lvSelected.SelectedIndex;
@@ -558,6 +564,8 @@ namespace MYCGenerator.Pages
         private void DeleteAction(object sender, RoutedEventArgs e)
         {
             prMain.IsActive = true;
+
+            TextBoxHelper.UpdateTextBinding();
 
             var btn = sender as Button;
             ListView lvSelected = ucAddRemoveItem.SelectedListView;
