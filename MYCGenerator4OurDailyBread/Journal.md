@@ -1,4 +1,7 @@
-﻿# Version 2017.906.3.0
+﻿## 20th Commit
+### [2017-09=07 01:58]
+Upload a new YouTube video and update README.md.
+# Version 2017.906.3.0
 ## 19th Commit
 ### [2017-09-06 16:41]
 The problems are fixed.
