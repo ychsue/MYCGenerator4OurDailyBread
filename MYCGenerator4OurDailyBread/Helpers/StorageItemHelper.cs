@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MYCGenerator4OurDailyBread.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,6 +61,20 @@ namespace MYCGenerator4OurDailyBread.Helpers
             {
                 return false;
             }
+        }
+
+        public static string TransferNameToAnAcceptableOne(string oldName)
+        {
+            if (oldName == null)
+                return "";
+            var subPairs = new ListOfReservedChars();
+            var newName = oldName;
+
+            foreach (var pair in subPairs)
+            {
+                newName = newName.Replace(pair.reserved, pair.substitute);
+            }
+            return newName;
         }
     }
 }

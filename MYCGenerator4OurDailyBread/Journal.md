@@ -1,4 +1,8 @@
-﻿## 20th Commit
+﻿## 21th Commit
+### [2017-09-30 16:47]
+Fix a problem coming from the reserved characters for a folder name; besides, I also substitute the chars '&' & '#' since these two chars will confuse the url.  
+You can get the rule for a suitable file and folder name from [this web site](https://msdn.microsoft.com/zh-tw/library/windows/desktop/aa365247(v=vs.85).aspx).
+## 20th Commit
 ### [2017-09=07 01:58]
 Upload a new YouTube video and update README.md.
 # Version 2017.906.3.0

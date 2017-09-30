@@ -28,13 +28,13 @@ namespace MYCGenerator4OurDailyBread.Helpers
             string stMYCont = theDate.Year.ToString("0000") +
                 theDate.Month.ToString("00") + " " +
                 "Our Daily Bread"; //TODO
-            stMYCont = WebUtility.HtmlEncode(stMYCont);
+            stMYCont = StorageItemHelper.TransferNameToAnAcceptableOne(stMYCont);
             string stMYCat = theDate.Year.ToString("0000") +
                 theDate.Month.ToString("00") +
                 theDate.Day.ToString("00") + " " +
-                ourDailyBread.title[0].Content + " "+
+                ourDailyBread.title[0].Content + " . "+
                 ourDailyBread.title[0].Answer;
-            stMYCat = WebUtility.HtmlEncode(stMYCat);
+            stMYCat = StorageItemHelper.TransferNameToAnAcceptableOne(stMYCat);
 
             //* [2017-08-04 17:21] Get or create the folder for MYContainer
             StorageFolder MYContainer = await folder?.MyCreateFolderAsync(stMYCont,CreationCollisionOption.OpenIfExists);

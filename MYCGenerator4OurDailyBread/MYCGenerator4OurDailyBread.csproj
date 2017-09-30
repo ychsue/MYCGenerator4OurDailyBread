@@ -121,6 +121,7 @@
       <DependentUpon>UCAddRemoveItems.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ForPlayPageSettings.cs" />
+    <Compile Include="ViewModels\ListOfReservedChars.cs" />
     <Compile Include="ViewModels\MYCategoryJson.cs" />
     <Compile Include="ViewModels\VM1OurDailyBread.cs" />
     <Compile Include="ViewModels\VMCollection4Comparison.cs" />
