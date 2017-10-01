@@ -21,6 +21,12 @@ namespace MYCGenerator4OurDailyBread.ViewModels
             this.Add(new ReserveSubstitutePair('*', '＊'));
             this.Add(new ReserveSubstitutePair('#', '＃'));
             this.Add(new ReserveSubstitutePair('&', '＆'));
+            //* [2017-10-01 20:08] For SharePoint https://support.microsoft.com/en-us/help/905231/information-about-the-characters-that-you-cannot-use-in-site-names--fo
+            this.Add(new ReserveSubstitutePair('~', '～'));
+            this.Add(new ReserveSubstitutePair('%', '％'));
+            this.Add(new ReserveSubstitutePair('{', '｛'));
+            this.Add(new ReserveSubstitutePair('}', '｝'));
+            this.Add(new ReserveSubstitutePair('+', '＋'));
         }
     }
 
