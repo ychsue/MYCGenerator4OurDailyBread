@@ -55,7 +55,7 @@ namespace MYCGenerator4OurDailyBread.Helpers
             {
                 MYCategory = await MYContainer.MyCreateFolderAsync(stMYCat, CreationCollisionOption.OpenIfExists);
             }
-            if (MYContainer == null)
+            if (MYCategory == null)
             {
                 ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.CannotCreateTheFolder, "MYContainerHelper:" + stMYCat + ":: ");
                 return;

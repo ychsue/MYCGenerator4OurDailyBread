@@ -74,6 +74,11 @@ namespace MYCGenerator4OurDailyBread.Helpers
             {
                 newName = newName.Replace(pair.reserved, pair.substitute);
             }
+            //* [2017-10-06 13:33] Since the end of a folder name cannot be '.', let me add one more character for it
+            newName = newName.Trim();
+            if (newName.Last() == '.')
+                newName += "•";
+
             return newName;
         }
     }

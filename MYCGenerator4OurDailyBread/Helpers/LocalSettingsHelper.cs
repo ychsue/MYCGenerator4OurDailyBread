@@ -21,7 +21,7 @@ namespace MYCGenerator4OurDailyBread.Helpers
         public const string IsHorizontalPairKey = "IsHorizontalPair";
         public const bool DefaultIsHorizontalPair = true;
         public const string PairMarginKey = "PairMargin";
-        public static Thickness DefaultPairMargin = new Thickness(0,4,0,4);
+        public static Thickness DefaultPairMargin = new Thickness(0,8,0,8);
         #endregion  View Settings
 
         /// <summary>

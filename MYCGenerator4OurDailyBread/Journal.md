@@ -1,4 +1,7 @@
-﻿# Version 2017.1001.3.0
+﻿## 23th Commit
+### [2017-10-06 14:20]
+Hm.. Today's title includes '. . .' at its end and a folder name seems cannot have '.' at its end. Well, I tried to fix it by adding an extra symbol at the end of the folder name if its title's end is '.'.
+# Version 2017.1001.3.0
 ## 22th Commit
 ### [2017-10-01 20:13]
 It has been submitted to Windows Store. But I found that some more characters need to be taken care. They are shown in [this article for SharePoint](https://support.microsoft.com/en-us/help/905231/information-about-the-characters-that-you-cannot-use-in-site-names--fo). So I add them into the code.  
@@ -8,7 +11,7 @@ Hm.. I am trying to add a new functionality into this code which I have never do
 Fix a problem coming from the reserved characters for a folder name; besides, I also substitute the chars '&' & '#' since these two chars will confuse the url.  
 You can get the rule for a suitable file and folder name from [this web site](https://msdn.microsoft.com/zh-tw/library/windows/desktop/aa365247(v=vs.85).aspx).
 ## 20th Commit
-### [2017-09=07 01:58]
+### [2017-09-07 01:58]
 Upload a new YouTube video and update README.md.
 # Version 2017.906.3.0
 ## 19th Commit
