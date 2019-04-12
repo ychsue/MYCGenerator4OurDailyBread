@@ -39,19 +39,19 @@ namespace MYCGenerator.Pages
     public sealed partial class OurDailyBreadPage : Page, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged([CallerMemberName]string propertyName="")
+        public void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #region     Binding Properties
-        private string _version="";
+        private string _version = "";
         public string version
         {
             get { return _version; }
             set { _version = value; NotifyPropertyChanged(); }
         }
-        
+
         private VMODBLangCodes _langCodes;
         public VMODBLangCodes langCodes
         {
@@ -62,22 +62,28 @@ namespace MYCGenerator.Pages
         public VMODBLangCode contentLangCode
         {
             get { return _contentLangCode; }
-            set { _contentLangCode = value;
+            set
+            {
+                _contentLangCode = value;
                 LocalSettingsHelper.SetLSContLang(value.LangCode);
                 abContentRefresh_Click(null, null);
-                NotifyPropertyChanged(); }
+                NotifyPropertyChanged();
+            }
         }
         private VMODBLangCode _answerLangCode;
         public VMODBLangCode answerLangCode
         {
             get { return _answerLangCode; }
-            set { _answerLangCode = value;
+            set
+            {
+                _answerLangCode = value;
                 LocalSettingsHelper.SetLSAnsLang(value.LangCode);
                 abAnswerRefresh_Click(null, null);
-                NotifyPropertyChanged(); }
+                NotifyPropertyChanged();
+            }
         }
 
-        private double _idealPairWidth =100;
+        private double _idealPairWidth = 100;
         public double idealPairWidth
         {
             get { return _idealPairWidth; }
@@ -98,25 +104,28 @@ namespace MYCGenerator.Pages
             set { _isContentGet = value; NotifyPropertyChanged(); }
         }
 
-        private bool _isMYCCanCreate =false;
+        private bool _isMYCCanCreate = false;
         public bool isMYCCanCreate
         {
             get { return _isMYCCanCreate; }
-            set { _isMYCCanCreate = value;
+            set
+            {
+                _isMYCCanCreate = value;
                 if (value == true)
                     abGenMYC.Visibility = Visibility.Visible;
                 else
                     abGenMYC.Visibility = Visibility.Collapsed;
-                NotifyPropertyChanged(); }
+                NotifyPropertyChanged();
+            }
         }
 
-        private string _bookshelfPath ="";
+        private string _bookshelfPath = "";
         public string bookshelfPath
         {
             get { return _bookshelfPath; }
             set { _bookshelfPath = value; NotifyPropertyChanged(); }
         }
-        
+
         public VM1OurDailyBread ourDailyBread
         {
             get { return (VM1OurDailyBread)GetValue(ourDailyBreadProperty); }
@@ -124,7 +133,7 @@ namespace MYCGenerator.Pages
         }
 
         public StorageFolder folder { get; private set; }
-        
+
 
         // Using a DependencyProperty as the backing store for ourDailyBread.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ourDailyBreadProperty =
@@ -132,7 +141,9 @@ namespace MYCGenerator.Pages
 
         #endregion      Binding Properties
 
-        public OurDailyBreadPage Current = null;
+        public static OurDailyBreadPage Current = null;
+        public WebView webviewContent = null;
+        public WebView webviewAnswer = null;
 
         public OurDailyBreadPage()
         {
@@ -144,6 +155,8 @@ namespace MYCGenerator.Pages
         {
             base.OnNavigatedTo(e);
             Current = this;
+            webviewAnswer = webAnswer;
+            webviewContent = webContent;
             //* [2017-08-17 16:32] Declare the version
             var ver = Windows.ApplicationModel.Package.Current.Id.Version;
             version = ver.Major + "." + ver.Minor + "." + ver.Build + "." + ver.Revision;
@@ -221,7 +234,8 @@ namespace MYCGenerator.Pages
                 isContentGet = true;
                 if (isAnsGet)
                     isMYCCanCreate = true;
-                return null; },
+                return null;
+            },
                 contentLangCode.LangCode);
         }
 
@@ -233,7 +247,8 @@ namespace MYCGenerator.Pages
                 isAnsGet = true;
                 if (isContentGet)
                     isMYCCanCreate = true;
-                return null; },
+                return null;
+            },
                 answerLangCode.LangCode);
         }
 
@@ -243,7 +258,7 @@ namespace MYCGenerator.Pages
             if (ourDailyBread.pageURL.Count != 0)
             {
                 var stUri = ourDailyBread.pageURL[0].Answer;
-                if(stUri!="" && Uri.TryCreate(stUri,UriKind.Absolute,out uri))
+                if (stUri != "" && Uri.TryCreate(stUri, UriKind.Absolute, out uri))
                     await Launcher.LaunchUriAsync(uri);
             }
         }
@@ -265,9 +280,31 @@ namespace MYCGenerator.Pages
             meCont.Play();
         }
 
+        private async void btAnswerBible_Link(object sender, RoutedEventArgs e)
+        {
+            Uri uri;
+            if (ourDailyBread.bibleURL.Count != 0)
+            {
+                var stBurl = ourDailyBread.bibleURL[0].Answer;
+                if (stBurl != "" && Uri.TryCreate(stBurl, UriKind.Absolute, out uri))
+                    await Launcher.LaunchUriAsync(uri);
+            }
+        }
+
+        private async void btContentBible_Link(object sender, RoutedEventArgs e)
+        {
+            Uri uri;
+            if (ourDailyBread.bibleURL.Count != 0)
+            {
+                var stBurl = ourDailyBread.bibleURL[0].Content;
+                if (stBurl != "" && Uri.TryCreate(stBurl, UriKind.Absolute, out uri))
+                    await Launcher.LaunchUriAsync(uri);
+            }
+        }
+
         private void lvContMP3_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(ourDailyBread.selContentMP3!=null)
+            if (ourDailyBread.selContentMP3 != null)
                 meCont.Source = new Uri(ourDailyBread.selContentMP3.Answer);
         }
 
@@ -279,7 +316,7 @@ namespace MYCGenerator.Pages
 
         private void lvAnsMP3_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(ourDailyBread.selAnswerMP3!=null)
+            if (ourDailyBread.selAnswerMP3 != null)
                 meAns.Source = new Uri(ourDailyBread.selAnswerMP3.Answer);
         }
 
@@ -308,7 +345,7 @@ namespace MYCGenerator.Pages
                 folder = await MRUHelper.GetAFolderBackAsync((string)LocalSettingsHelper.GetValueOfAKey(GlobalVariables.MainFolderTokenKey));
             }
 
-            if(folder==null)
+            if (folder == null)
             {
                 bookshelfPath = "";
                 ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.CannotGetTheFolder, "From OurDailyBreadPage:abGenMYC_Click:: ");
@@ -357,7 +394,7 @@ namespace MYCGenerator.Pages
 
         private void ToggleSettings_Click(object sender, RoutedEventArgs e)
         {
-            gdSettings.Visibility = (gdSettings.Visibility==Visibility.Collapsed)?Visibility.Visible:Visibility.Collapsed;
+            gdSettings.Visibility = (gdSettings.Visibility == Visibility.Collapsed) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void btSetChange_Click(object sender, RoutedEventArgs e)
@@ -438,7 +475,7 @@ namespace MYCGenerator.Pages
                     (ucAddRemoveItem.NumPlusItems > GlobalVariables.MaxPlusNum) ? GlobalVariables.MaxPlusNum : ucAddRemoveItem.NumPlusItems;
                 int nadd = ucAddRemoveItem.NumPlusItems;
                 int ith;
-                for ( ith = whichCollection.Count-1; ith >= whichCollection.Count-ucAddRemoveItem.NumPlusItems && ith > selIndex; ith--)
+                for (ith = whichCollection.Count - 1; ith >= whichCollection.Count - ucAddRemoveItem.NumPlusItems && ith > selIndex; ith--)
                 {
                     if (whichCollection[ith].Answer != "")
                         break;
@@ -455,7 +492,7 @@ namespace MYCGenerator.Pages
                     whichCollection[ith + ucAddRemoveItem.NumPlusItems].Answer = whichCollection[ith].Answer;
                     whichCollection[ith].Answer = "";
                     ith--;
-                } while (ith >=selIndex);
+                } while (ith >= selIndex);
                 //* [2017-08-29 20:32] Notify Collection Changed
                 whichCollection.NoticeCollectionChanged(this, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             }
@@ -599,7 +636,7 @@ namespace MYCGenerator.Pages
                 }
                 //* [2017-08-30 15:13] Remove dummy pairs
                 var lastPair = whichCollection.LastOrDefault();
-                while (whichCollection.Count > (selIndex+1) && lastPair != null && lastPair.Answer == "" && lastPair.Content == "")
+                while (whichCollection.Count > (selIndex + 1) && lastPair != null && lastPair.Answer == "" && lastPair.Content == "")
                 {
                     whichCollection.Remove(lastPair);
                     lastPair = whichCollection.LastOrDefault();
@@ -617,10 +654,12 @@ namespace MYCGenerator.Pages
         private double _TitleFontSize = LocalSettingsHelper.GetTitleFontSize();
         public double TitleFontSize
         {
-            get {
+            get
+            {
                 if (_TitleFontSize == double.NaN || _TitleFontSize < 4 || _TitleFontSize > 50)
                     _TitleFontSize = LocalSettingsHelper.DefaultTitleFontSize;
-                return _TitleFontSize; }
+                return _TitleFontSize;
+            }
             set
             {
                 if (value < 4)
@@ -643,10 +682,12 @@ namespace MYCGenerator.Pages
         private double _CommonFontSize = LocalSettingsHelper.GetCommonFontSize();
         public double CommonFontSize
         {
-            get {
+            get
+            {
                 if (_CommonFontSize == double.NaN || _CommonFontSize < 4 || _CommonFontSize > 50)
                     _CommonFontSize = LocalSettingsHelper.DefaultCommonFontSize;
-                return _CommonFontSize; }
+                return _CommonFontSize;
+            }
             set
             {
                 if (value < 4)
@@ -678,11 +719,13 @@ namespace MYCGenerator.Pages
         public bool IsHorizontalPair
         {
             get { return _IsHorizontalPair; }
-            set {
+            set
+            {
                 _IsHorizontalPair = value;
                 LocalSettingsHelper.SetKeyValue(LocalSettingsHelper.IsHorizontalPairKey, value);
                 UpdateIdealPairWidth(gdPage.ActualWidth);
-                NotifyPropertyChanged(); }
+                NotifyPropertyChanged();
+            }
         }
 
         private Thickness _PairMargin = LocalSettingsHelper.GetPairMargin();

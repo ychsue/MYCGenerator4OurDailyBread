@@ -51,7 +51,7 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                
+
                                 <RadioButton x:Name="rbContRun" IsChecked="{Binding ElementName=page,Path=isContentGet, Converter={StaticResource NotBool}}" Visibility="Collapsed" ></RadioButton>
 
                                 <AppBarButton x:Name="abContentRefresh" Icon="Refresh" Click="abContentRefresh_Click" Visibility="{Binding ElementName=page, Path=isContentGet, Converter={StaticResource BToV}}"></AppBarButton>
@@ -72,6 +72,7 @@
                                 <AppBarButton x:Name="abContPlay" Icon="Play" Click="abContPlay_Click"/>
                                 <AppBarButton x:Name="abContPause" Icon="Pause" Click="abContPause_Click"></AppBarButton>
                             </StackPanel>
+                            <WebView x:Name="webContent"></WebView>
                         </StackPanel>
                         <!--#endregion 1.1 For Content-->
                         <!--#region 1.2 For Answer-->
@@ -107,6 +108,7 @@
                                 <AppBarButton x:Name="abAnsPlay" Icon="Play" Click="abAnsPlay_Click"/>
                                 <AppBarButton x:Name="abAnsPause" Icon="Pause" Click="abAnsPause_Click"></AppBarButton>
                             </StackPanel>
+                            <WebView x:Name="webAnswer"></WebView>
                         </StackPanel>
                         <!--#endregion 1.2 For Answer-->
                     </Grid>
@@ -159,6 +161,14 @@
                                 <Rectangle Fill="LightYellow"/>
                                 <TextBlock Text="Bible Verses" HorizontalAlignment="Center"/>
                             </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Click="btContentBible_Link" HorizontalAlignment="Center">📕 Bible Link</Button>
+                                <Button Grid.Column="1" Click="btAnswerBible_Link" HorizontalAlignment="Center">📕 Bible Link</Button>
+                            </Grid>
                             <ListView x:Name="lvBible" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding ourDailyBread.BibleContent, ElementName=page}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
@@ -205,7 +215,7 @@
                                     DeleteCont_Click="ucAddRemoveItem_DeleteCont_Click"
                                     DeletePair_Click="ucAddRemoveItem_DeletePair_Click"
                                     ></ucontrols:UCAddRemoveItems>
-        
+
         <Grid x:Name="gdSettings" Visibility="Collapsed">
             <Rectangle Fill="Wheat" Opacity="0.9" Tapped="ToggleSettings_Click"></Rectangle>
             <StackPanel Margin="4">

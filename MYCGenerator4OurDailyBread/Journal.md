@@ -1,4 +1,31 @@
-﻿## 23th Commit
+﻿## 24th Commit
+### [2019-04-12 15:48] Stock at building with **Native tool chain** 
+1. After many hours compilation, I got an error :
+Severity	Code	Description	Project	File	Line	Suppression State
+Error		ILT0005: 'C:\Users\*****\.nuget\packages\microsoft.net.native.compiler\1.7.6\tools\x64\ilc\Tools\nutc_driver.exe @"C:\Users\*****\source\repos\MYCGenerator4OurDailyBread\MYCGenerator4OurDailyBread\obj\x64\Release\ilc\intermediate\MDIL\MYCGenerator4OurDailyBread.rsp"' returned exit code 1	MYCGenerator4OurDailyBread	C:\Users\*****\.nuget\packages\microsoft.net.native.compiler\1.7.6\tools\Microsoft.NetNative.targets	697	
+2. Then I decided to get the original one from repositry.
+After turning off **System.Reactive** and didn't update all packages, it works on VS2019 preview.
+3. I got an error when I was running the certification kit. Once I uninstall this App and then delete some folders could fix this problem. The folders are described in [this StackOverflow's Q&A](https://stackoverflow.com/questions/37748697/work-around-unspecified-error-in-windows-app-certification-kit).
+
+### [2019-04-11 16:38] Using querySelector in Javascript can find the elements which are related to your query string
+As described in [this StackOverflow's Q&A](https://stackoverflow.com/questions/12166753/how-to-get-child-element-by-class-name), you can use **querySelector** to get an element based on your query.
+The syntax of the query is the same as the one used in CSS file.
+
+### [2019-04-11 16:25] Finally, I use WebView to execute javascript
+1. It can work; however, it takes a lot of memory.
+2. The project **ForSeleniumWebDrive** I do not use it at this moment since I do not use **Selenium** at this moment.
+
+### [2019-02-04 21:07] EdgeDriver, ChromeDriver and FirefoxDriver do not work
+1. For Edge, someone ask the same question in [this forum](https://github.com/SeleniumHQ/selenium/issues/6598); however, no use for me....
+2. After testing, once I launch **MicrosoftWebDriver.exe* before I launch this APP and provide its port to this APP, it works. Hm...
+
+### [2019-02-04 13:12] Since https://odb.org has become an App like website, I had to find a new way to get its web pages
+1. Just like Angular, this website is generated dynamically so that the innerHTML of **web.Load** is useless since I need its javascript code is run.
+2. **web.LoadFromBrowser** just work for **WinForm** as described in [this StackOverflow's Q&A](https://stackoverflow.com/questions/46981666/htmlagilitypack-loadfrombrowser-method-not-found) and it introduced me to use [Selenium.WebDriver](https://www.seleniumhq.org/projects/webdriver/).
+3. So I follow [this instruction](https://www.automatetheplanet.com/webdriver-dotnetcore2/) and [making this project is available for netstandard2.0](https://blogs.msdn.microsoft.com/dotnet/2017/10/10/announcing-uwp-support-for-net-standard-2-0/). **This Step Take Long Time**
+4. If the step 3 can work, I can get the innerHTML from **selenium.WebDriver** and then feed it to **htmlAgilityPack** as described in [this web page](https://stackoverflow.com/questions/52440914/how-to-get-htmlagilitypack-htmldocument-from-selenium-driver-pagesource).## 23th Commit
+
+## 23th Commit
 ### [2017-10-06 14:20]
 Hm.. Today's title includes '. . .' at its end and a folder name seems cannot have '.' at its end. Well, I tried to fix it by adding an extra symbol at the end of the folder name if its title's end is '.'.
 # Version 2017.1001.3.0

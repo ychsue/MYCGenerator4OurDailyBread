@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="48028Young-ChungHsue.MYCGeneratorforOurDailyBread" Publisher="CN=9879DB68-B579-4F0B-BE3D-881ECD7B1CCD" Version="2017.1001.3.0" />
-  <mp:PhoneIdentity PhoneProductId="51d39bcf-9d7f-4afa-b8a9-124a8f0b9c02" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="48028Young-ChungHsue.MYCGeneratorforOurDailyBread" Publisher="CN=9879DB68-B579-4F0B-BE3D-881ECD7B1CCD" Version="2019.412.4.0" />
+  <mp:PhoneIdentity PhoneProductId="850a5dd5-4071-4693-b4b1-15b9bcaf4703" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>MYC Generator for Our Daily Bread</DisplayName>
     <PublisherDisplayName>Young-Chung Hsue</PublisherDisplayName>

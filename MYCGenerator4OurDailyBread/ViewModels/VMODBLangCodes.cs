@@ -56,7 +56,7 @@ namespace MYCGenerator4OurDailyBread.ViewModels
             this.Add(new VMODBLangCode()
             {
                 View = "English",
-                Address = "https://ourdailybread.org",
+                Address = "https://odb.org",
                 LangCode = "en-US"
             });
 
