@@ -454,7 +454,7 @@ namespace MYCGenerator.ViewModels
             //** [2017-07-27 14:23] Get poem
             //ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("poem-box")==true).FirstOrDefault();
             //string poem = ndBuf?.InnerText;
-            webScript = (stLangCode.ToLower() == "en-us") ? "a=document.querySelectorAll('.container .poem');" : "a=document.querySelectorAll('.entry-content .poem-box');";
+            webScript = (stLangCode.ToLower() == "en-us") ? "a=document.querySelectorAll('.container .devo-reflection.devo-question');" : "a=document.querySelectorAll('.entry-content .poem-box');";
             webScript = webScript + "if(a.length>0){a[0].innerText} else {''}";
             string poem = "";
             try
@@ -480,7 +480,7 @@ namespace MYCGenerator.ViewModels
             //** [2017-07-27 14:23] Get thought
             //ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("thought-box")==true).FirstOrDefault();
             //string thought = ndBuf?.InnerText;
-            webScript = (stLangCode.ToLower() == "en-us") ? "a=document.querySelectorAll('.container .devo-reflection');" : "a=document.querySelectorAll('.entry-content .thought-box');";
+            webScript = (stLangCode.ToLower() == "en-us") ? "a=document.querySelectorAll('.container .devo-reflection.devo-prayer');" : "a=document.querySelectorAll('.entry-content .thought-box');";
             webScript = webScript + "if(a.length>0){a[0].innerText} else {''}";
             string thought = null;
             try
