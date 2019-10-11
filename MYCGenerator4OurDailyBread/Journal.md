@@ -1,4 +1,7 @@
 ﻿# 10th Submission
+## 27th Commit
+### [2019-10-11 21:17] One important thing about "DataContext"
+Because the *flyout* is inside a *AppBarButton*, it cannot get data from root, so I need to set *DataContext="{Binding ElementName=page}"* in *AppBarButton*. Then I can bind its data with the *flyout*.
 ## 26th Commit
 ### [2019-10-11 15:48] Now, even Spanish part use the SPA used for English one as its web page.
 By the way, https://www.bible.com has also changed its logic.
