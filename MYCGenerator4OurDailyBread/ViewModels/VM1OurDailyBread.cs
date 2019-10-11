@@ -135,25 +135,43 @@ namespace MYCGenerator.ViewModels
             set { _Content = value; NotifyPropertyChanged(); }
         }
 
-        private async Task<NavigationEventArgs> _webViewEventToPromise (Action<LoadCompletedEventHandler> addHandler, Action<LoadCompletedEventHandler> removeHandler)
+        private async Task<string> LoadPageAsync(WebView wv, Uri uri)
         {
             SemaphoreSlim waitUntil = new SemaphoreSlim(0, 1);
-            NavigationEventArgs result = null;
-            LoadCompletedEventHandler action = (object sender, NavigationEventArgs args) =>
+            string result = "";
+            // * [2019-08-12 21:05] Initialize events
+            Windows.Foundation.TypedEventHandler<WebView, WebViewNavigationCompletedEventArgs> Wv_NavigationCompleted = (WebView sender, WebViewNavigationCompletedEventArgs args) =>
             {
-                result = args;
+                waitUntil.Release();
+            };
+            WebViewNavigationFailedEventHandler Wv_NavigationFailed = (object sender, WebViewNavigationFailedEventArgs e) =>
+            {
+                result = "fail";
                 waitUntil.Release();
             };
 
-            addHandler(action);
+            wv.NavigationCompleted += Wv_NavigationCompleted;
+            wv.NavigationFailed += Wv_NavigationFailed;
+            wv.Navigate(uri);
             await waitUntil.WaitAsync();
-            removeHandler(action);
+            wv.NavigationCompleted -= Wv_NavigationCompleted;
+            wv.NavigationFailed -= Wv_NavigationFailed;
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stURL"></param>
+        /// <param name="OneOfPropInfo"></param>
+        /// <param name="p"></param>
+        /// <param name="stLangCode">If it is "mainURL", skip finding mainURL</param>
+        /// <param name="date"></param>
         internal async void initialize(string stURL, PropertyInfo OneOfPropInfo, Func<object> p = null, string stLangCode = "", object date = null)
         {
             bool isAnswer = OneOfPropInfo.Name.ToLower() == "answer";
+            bool ismainURL = stLangCode == "mainURL";
+            string mainURL = (ismainURL) ? stURL : "";
             //* [2017-07-31 12:21] initialize strings
             IniStrings(OneOfPropInfo);
             //* [2017-08-05 08:46] Add the langCode into this object
@@ -162,37 +180,70 @@ namespace MYCGenerator.ViewModels
             WebView webView = null;
             if (isAnswer)
             {
-                this.Language[0].Answer = stLangCode;
+                if (ismainURL == false)
+                {
+                    this.Language[0].Answer = stLangCode;
+                } else
+                {
+                    stLangCode = this.Language[0].Answer;
+                }
                 webView = OurDailyBreadPage.Current.webviewAnswer;
             }
             else
             {
-                this.Language[0].Content = stLangCode;
+                if (ismainURL == false)
+                {
+                    this.Language[0].Content = stLangCode;
+                } else
+                {
+                    stLangCode = this.Language[0].Content;
+                }
                 webView = OurDailyBreadPage.Current.webviewContent;
             }
             //* [2017-06-21 14:23] Follow the instruction of http://html-agility-pack.net/
-            string mainURL = "";
             string webScript = "";
-            try
+            
+            if (mainURL == "")
             {
-                // TEST TODO
-                var ev = _webViewEventToPromise(
-                //var LC = Observable.FromEventPattern<LoadCompletedEventHandler, NavigationEventArgs>(
-                    h => webView.LoadCompleted += h,
-                    h => webView.LoadCompleted -= h
-                    );
-                webView.Navigate(new Uri(stURL));
-                await ev;
-                //await LC.FirstAsync();
-                webScript = (stLangCode.ToLower() == "en-us") ? "document.getElementsByClassName(\"read-today\")[0].href" : "d1=document.querySelector('#page-body');d2=d1.querySelector('.section');a=d2.querySelector('a');a.href";
-                mainURL = await webView.InvokeScriptAsync("eval", new string[] { webScript });
-            }
-            catch (Exception exc)
-            {
-                Debug.WriteLine(stURL + ":" + exc.Message);
-                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL + ":" + exc.Message);
-                p?.Invoke();
-                return;
+                try
+                {
+                    string mesg = await LoadPageAsync(webView, new Uri(stURL));
+                    if (mesg != "") ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL + ": *LoadPageAsync* fail : " + mesg);
+                    webScript = ((stLangCode.ToLower() == "en-us")|| (stLangCode.ToLower() == "es")) ? "a=document.querySelector('a[class$=\"-today\"]');if(a){a.href;}else{''}" : "a=document.querySelector('#page-body .section a');if(a){a.href;}else{''}";
+                    if ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es"))
+                    {
+                        mainURL = $"{stURL}/{DateTime.Now.Year.ToString()}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Day.ToString("D2")}";   // I cannot get its link from its main page.
+                    }
+                    else
+                    {
+                        for (int i0 = 0; i0 < 40; i0++)
+                        {
+                            mainURL = await webView.InvokeScriptAsync("eval", new string[] { webScript });
+                            if (mainURL == "")
+                            {
+                                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL + "::" + "Imcomplete Loading: " + i0);
+                                await Task.Delay(300);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception exc)
+                {
+                    Debug.WriteLine(stURL + ":" + exc.Message);
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL + ":" + exc.Message + ": Please refresh it.");
+                    p?.Invoke();
+                    return;
+                }
+                if (mainURL == "")
+                {
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL + ":" + "載不了");
+                    p?.Invoke();
+                    return;
+                }
             }
 
             //* [2017-07-14 15:55] Get MainURL
@@ -216,43 +267,44 @@ namespace MYCGenerator.ViewModels
             OneOfPropInfo.SetValue(pageURL[0], pageUri);
             //* [2017-07-15 22:30] Get the main Part
             //** [2017-06-21 16:15] Get its WebSite
-            if (pageUri != stURL)
+            if ((pageUri != stURL) || ismainURL)
             {
                 try
                 {
-                    //doc = await web.LoadFromWebAsync((string)OneOfPropInfo.GetValue(pageURL[0]));
-                    //doc.OptionOutputOriginalCase = true;
-                    ////* [2017-06-21 16:15] Get its title
-                    //docNode = doc.DocumentNode;
-                    // TEST TODO
-                    var ev = _webViewEventToPromise(
-                    //var LC = Observable.FromEventPattern<LoadCompletedEventHandler, NavigationEventArgs>(
-                        h => webView.LoadCompleted += h,
-                        h => webView.LoadCompleted -= h
-                        );
-                    webView.Navigate(new Uri(pageUri));
-                    await ev;
-                    //await LC.FirstAsync();
+                    string mesg = await LoadPageAsync(webView, new Uri(pageUri));
+                    if (mesg != "") ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, pageUri+ ": *LoadPageAsync* fail :" + mesg);
                 }
                 catch (Exception)
                 {
-                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL);
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL + "->" + pageUri);
                     p?.Invoke();
                     return;
                 }
             }
 
-            string title;
+            string title="";
             try
             {
-                title = await webView.InvokeScriptAsync("eval", new string[] { "a=document.querySelectorAll('h2[class$=\"-title\"], h1[class$=\"-title\"]');if(a.length>0){a[0].innerText}" });
+                for (int i0 = 0; i0 < 40; i0++)
+                {
+                    title = await webView.InvokeScriptAsync("eval", new string[] { "a=document.querySelectorAll('h2[class$=\"-title\"], h1[class$=\"-title\"]');if(a.length>0){a[0].innerText}" });
+                    if (title == "")
+                    {
+                        ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, pageUri + ":" + ": Loading imcomplete : " + i0);
+                        await Task.Delay(300);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
             }
             catch (Exception exc)
             {
                 title = exc.Message;
             }
 
-            if (title == null)
+            if (title == "")
             {
                 ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoTitle, pageUri);
             }
@@ -298,11 +350,12 @@ namespace MYCGenerator.ViewModels
                 bibleURL = "";
             }
 
-            if (bibleURL == "" || (stLangCode.ToLower() == "en-us") || (stLangCode == "ru") || (stLangCode == "ta") || (stLangCode == "hi") || (stLangCode == "it") || (stLangCode == "nl") || (stLangCode == "pt"))
+            if (bibleURL == "" || (stLangCode.ToLower() == "en-us") || (stLangCode == "ru") || (stLangCode == "ta") || (stLangCode == "hi") || (stLangCode == "it") || (stLangCode == "nl") || (stLangCode == "pt")
+                || (stLangCode == "es") || (stLangCode == "de"))
             {
                 string search = "";
                 string version = "";
-                string script = (stLangCode.ToLower() == "en-us") ? "encodeURI(document.querySelector('.devo-scriptureinsight a').innerText)" : "a=document.querySelector('div.passage-box span');if(!!a){encodeURI(a.innerText)}";
+                string script = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "encodeURI(document.querySelector('.devo-scriptureinsight a').innerText)" : "a=document.querySelector('div.passage-box span');if(!!a){encodeURI(a.innerText)}";
                 try
                 {
                     search = await webView.InvokeScriptAsync("eval", new string[] { script });
@@ -314,8 +367,11 @@ namespace MYCGenerator.ViewModels
 
                 switch (stLangCode.ToLower())
                 {
-                    case "en-us":
+                    case "en-us": case "es":
                         version = "";
+                        break;
+                    case "de":
+                        version = "HOF";
                         break;
                     case "ru":
                         version = "NRT";
@@ -340,6 +396,10 @@ namespace MYCGenerator.ViewModels
                 }
                 if (search != "null")
                 {
+                    if (stLangCode == "de")
+                    {
+                        search = search.Replace(",", "%3A").Replace("%2C", "%3A");
+                    }
                     biblegetwayURL = "https://www.biblegateway.com/passage/?search=" + search +
                         ((version == "") ? "" : ("&version=" + version));
                 }
@@ -351,9 +411,9 @@ namespace MYCGenerator.ViewModels
             }
             else
             {
-                //* [2017-09-06 15:42] Correction for German's bible
-                if (stLangCode.ToLower() == "de")
-                    bibleURL = bibleURL.Replace("%2C", "%3A");
+                ////* [2017-09-06 15:42] Correction for German's bible
+                //if (stLangCode.ToLower() == "de")
+                //    bibleURL = bibleURL.Replace("%2C", "%3A");
 
                 if (bibleURL != "" && bibleURL.IndexOf("http") != 0)
                     bibleURL = "http:" + bibleURL;
@@ -385,7 +445,7 @@ namespace MYCGenerator.ViewModels
             var mp3Link = (isAnswer) ? this.answerMP3 : this.contentMp3;
             mp3Link.Clear(); //Initialize it.
             string stAudios = "";
-            webScript = (stLangCode.ToLower() == "en-us") ? "a=document.querySelectorAll('.mobile-audio-links a');a[1].href" : "a=document.querySelectorAll('audio');c=[];a.forEach(function(b){c.push(b.src)});c.toString()";
+            webScript = ((stLangCode.ToLower() == "en-us")|| (stLangCode.ToLower() == "es")) ? "a=document.querySelectorAll('.mobile-audio-links a');a[1].href" : "a=document.querySelectorAll('audio');c=[];a.forEach(function(b){c.push(b.src)});c.toString()";
             try
             {
                 stAudios = await webView.InvokeScriptAsync("eval", new string[] { webScript });
@@ -418,7 +478,7 @@ namespace MYCGenerator.ViewModels
 
             //* [2017-07-06 22:38] Get values for MYC cards
             // * [2019-04-10 13:38] Get the container of content
-            webScript = (stLangCode.ToLower() == "en-us") ? "a=document.querySelectorAll('.container .content div');" : "a=document.querySelectorAll('.entry-content .post-content');";
+            webScript = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "a=document.querySelectorAll('.container .content div');" : "a=document.querySelectorAll('.entry-content .post-content');";
             bool hasContent = false;
             try
             {
@@ -451,10 +511,10 @@ namespace MYCGenerator.ViewModels
                 //* [2017-08-25 10:33] Notify that the content is changed
                 this.Content.NoticeCollectionChanged(this.Content, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
-            //** [2017-07-27 14:23] Get poem
+            //** [2017-07-27 14:23] Get question
             //ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("poem-box")==true).FirstOrDefault();
             //string poem = ndBuf?.InnerText;
-            webScript = (stLangCode.ToLower() == "en-us") ? "a=document.querySelectorAll('.container .devo-reflection.devo-question');" : "a=document.querySelectorAll('.entry-content .poem-box');";
+            webScript = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "a=document.querySelectorAll('.container .devo-reflection.devo-question');" : "a=document.querySelectorAll('.entry-content .thought-box');";
             webScript = webScript + "if(a.length>0){a[0].innerText} else {''}";
             string poem = "";
             try
@@ -477,10 +537,10 @@ namespace MYCGenerator.ViewModels
                 //* [2017-08-25 10:33] Notify that the poem is changed
                 this.poem.NoticeCollectionChanged(this.poem, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
-            //** [2017-07-27 14:23] Get thought
+            //** [2017-07-27 14:23] Get answer
             //ndBuf = ndContent.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("thought-box")==true).FirstOrDefault();
             //string thought = ndBuf?.InnerText;
-            webScript = (stLangCode.ToLower() == "en-us") ? "a=document.querySelectorAll('.container .devo-reflection.devo-prayer');" : "a=document.querySelectorAll('.entry-content .thought-box');";
+            webScript = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "a=document.querySelectorAll('.container .devo-reflection.devo-prayer');" : "a=document.querySelectorAll('.entry-content .poem-box');";
             webScript = webScript + "if(a.length>0){a[0].innerText} else {''}";
             string thought = null;
             try
@@ -554,7 +614,8 @@ namespace MYCGenerator.ViewModels
             if (bibleURL.Contains("www.bible.com"))
             {
                 //textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("verse-outter") == true);
-                textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("bible-text") == true);
+                //textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("bible-text") == true);
+                textNodes = doc.DocumentNode.Descendants().Where(x => x.Attributes["class"]?.Value.Contains("near-black") == true);
             }
             else if (bibleURL.Contains("bibleonline.ru"))
             {
@@ -596,6 +657,16 @@ namespace MYCGenerator.ViewModels
             string stBuf = "";
             bool isWwwBibleCom = url.Contains("www.bible.com");
             bool isRusian = url.Contains("bibleonline.ru");
+            //* [2019-10-11 14:25] For new rule for www.bible.com
+            if (isWwwBibleCom)
+            {
+                if(node.Name=="h1" || node.Name == "div")
+                {
+                    bibleContent.Add(node.InnerText.Trim());
+                }
+                return;
+            }
+
             //* [2017-07-20 10:00] Remove all "footnote"
             foreach (var inode in node.Descendants("sup").Where(x => x.Attributes["class"]?.Value == "footnote"))
             {

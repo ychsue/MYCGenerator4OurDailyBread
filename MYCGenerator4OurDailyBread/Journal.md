@@ -1,4 +1,12 @@
-﻿## 24th Commit
+﻿# 10th Submission
+## 26th Commit
+### [2019-10-11 15:48] Now, even Spanish part use the SPA used for English one as its web page.
+By the way, https://www.bible.com has also changed its logic.
+
+### [2019-10-04 11:52] Let the textbox inside a button's flyout to be inputable
+From [this StackOverflow's Q&A](https://stackoverflow.com/questions/39096758/cant-enter-enter-text-in-textbox-control-inside-flyout), you can see that you need to set the property **AllowFocusOnInteraction** of the button.
+
+## 24th Commit
 ### [2019-04-12 15:48] Stock at building with **Native tool chain** 
 1. After many hours compilation, I got an error :
 Severity	Code	Description	Project	File	Line	Suppression State

@@ -160,6 +160,9 @@ namespace MYCGenerator.Pages
             //* [2017-08-17 16:32] Declare the version
             var ver = Windows.ApplicationModel.Package.Current.Id.Version;
             version = ver.Major + "." + ver.Minor + "." + ver.Build + "." + ver.Revision;
+            //* [2019-10-04 11:50] Initialize xaml part
+            abCLink.AllowFocusOnInteraction = true;
+            abALink.AllowFocusOnInteraction = true;
             //* [2017-07-25 15:12] Set the language
             IniAllLangs();
             IniBookshelfPath();
@@ -226,31 +229,75 @@ namespace MYCGenerator.Pages
                 idealPairWidth = bufWidth;
         }
 
-        private void abContentRefresh_Click(object sender, RoutedEventArgs e)
+#region       Initialize_Content_OR_Answer
+        private void init_Content(string url= "", string itsType = "")
         {
             isContentGet = false;
             isMYCCanCreate = false;
-            ourDailyBread.initialize(contentLangCode.Address, VMContentAnswerPair.GetPContent(), () => {
+            url = (url == "") ? contentLangCode.Address : url;
+            itsType = (itsType == "") ? contentLangCode.LangCode : itsType;
+            ourDailyBread.initialize(url, VMContentAnswerPair.GetPContent(), () => {
                 isContentGet = true;
                 if (isAnsGet)
                     isMYCCanCreate = true;
                 return null;
             },
-                contentLangCode.LangCode);
+                itsType);
         }
 
-        private void abAnswerRefresh_Click(object sender, RoutedEventArgs e)
+        private void abContentRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            init_Content();
+        }
+
+        private void abCLink_Click(object sender, RoutedEventArgs e)
+        {
+            init_Content(tbCLink.Text, "mainURL");
+        }
+
+
+        private void TbCLink_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key== VirtualKey.Enter)
+            {
+                init_Content(tbCLink.Text, "mainURL");
+            }
+        }
+
+
+        private void init_Answer(string url= "", string itsType= "")
         {
             isAnsGet = false;
             isMYCCanCreate = false;
-            ourDailyBread.initialize(answerLangCode.Address, VMContentAnswerPair.GetPAnswer(), () => {
+            url = (url == "") ? answerLangCode.Address : url;
+            itsType = (itsType == "") ? answerLangCode.LangCode : itsType;
+            ourDailyBread.initialize(url, VMContentAnswerPair.GetPAnswer(), () => {
                 isAnsGet = true;
                 if (isContentGet)
                     isMYCCanCreate = true;
                 return null;
             },
-                answerLangCode.LangCode);
+                itsType);
         }
+
+        private void abAnswerRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            init_Answer();
+        }
+
+        private void abALink_Click(object sender, RoutedEventArgs e)
+        {
+            init_Answer(tbALink.Text, "mainURL");
+        }
+
+        private void TbALink_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+            {
+                init_Content(tbALink.Text, "mainURL");
+            }
+        }
+#endregion  Initialize_Content_OR_Answer
 
         private async void imgAnswer_Tapped(object sender, TappedRoutedEventArgs e)
         {

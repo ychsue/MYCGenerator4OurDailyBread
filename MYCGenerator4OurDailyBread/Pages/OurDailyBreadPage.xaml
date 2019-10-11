@@ -43,6 +43,16 @@
                         <StackPanel Grid.Column="0" Margin="4">
                             <TextBlock Text="Content" HorizontalAlignment="Center"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <AppBarButton Icon="Link" x:Name="abCLink" DataContext="{Binding ElementName=page}">
+                                    <AppBarButton.Flyout>
+                                        <Flyout>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBox x:Name="tbCLink" Text="{Binding ourDailyBread.pageURL[0].Content}" KeyUp="TbCLink_KeyUp"></TextBox>
+                                                <AppBarButton Icon="Accept" Click="abCLink_Click"></AppBarButton>
+                                            </StackPanel>
+                                        </Flyout>
+                                    </AppBarButton.Flyout>
+                                </AppBarButton>
                                 <ComboBox ItemsSource="{Binding langCodes, ElementName=page}"
                             SelectedItem="{Binding contentLangCode, ElementName=page, Mode=TwoWay}" Margin="4">
                                     <ComboBox.ItemTemplate>
@@ -79,6 +89,16 @@
                         <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="Answer" HorizontalAlignment="Center"/>
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <AppBarButton Icon="Link" x:Name="abALink" DataContext="{Binding ElementName=page}">
+                                    <AppBarButton.Flyout>
+                                        <Flyout>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBox x:Name="tbALink" Text="{Binding ourDailyBread.pageURL[0].Answer}" KeyUp="TbALink_KeyUp" ></TextBox>
+                                                <AppBarButton Icon="Accept" Click="abALink_Click"></AppBarButton>
+                                            </StackPanel>
+                                        </Flyout>
+                                    </AppBarButton.Flyout>
+                                </AppBarButton>
                                 <ComboBox ItemsSource="{Binding langCodes, ElementName=page}"
                             SelectedItem="{Binding answerLangCode, ElementName=page, Mode=TwoWay}" Margin="4">
                                     <ComboBox.ItemTemplate>
