@@ -17,6 +17,7 @@ using System.IO;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using System.Threading;
+using Windows.Web.Http;
 
 namespace MYCGenerator.ViewModels
 {
@@ -152,7 +153,12 @@ namespace MYCGenerator.ViewModels
 
             wv.NavigationCompleted += Wv_NavigationCompleted;
             wv.NavigationFailed += Wv_NavigationFailed;
-            wv.Navigate(uri);
+            // ** [2020-03-03 09:43] Gotten from https://stackoverflow.com/questions/33391437/universal-windows-10-webview-how-to-clear-disable-cache
+            HttpRequestMessage rmsg = new HttpRequestMessage(HttpMethod.Get, uri);
+            rmsg.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
+            rmsg.Headers.Add("Pragma", "no-cache");
+            wv.NavigateWithHttpRequestMessage(rmsg);
+//            wv.Navigate(uri);
             await waitUntil.WaitAsync();
             wv.NavigationCompleted -= Wv_NavigationCompleted;
             wv.NavigationFailed -= Wv_NavigationFailed;
@@ -167,7 +173,7 @@ namespace MYCGenerator.ViewModels
         /// <param name="p"></param>
         /// <param name="stLangCode">If it is "mainURL", skip finding mainURL</param>
         /// <param name="date"></param>
-        internal async void initialize(string stURL, PropertyInfo OneOfPropInfo, Func<object> p = null, string stLangCode = "", object date = null)
+        internal async void initialize(string stURL, PropertyInfo OneOfPropInfo, Func<object> p = null, string stLangCode = "")
         {
             bool isAnswer = OneOfPropInfo.Name.ToLower() == "answer";
             bool ismainURL = stLangCode == "mainURL";
@@ -202,20 +208,34 @@ namespace MYCGenerator.ViewModels
             }
             //* [2017-06-21 14:23] Follow the instruction of http://html-agility-pack.net/
             string webScript = "";
-            
+
             if (mainURL == "")
             {
                 try
                 {
-                    string mesg = await LoadPageAsync(webView, new Uri(stURL));
-                    if (mesg != "") ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL + ": *LoadPageAsync* fail : " + mesg);
-                    webScript = ((stLangCode.ToLower() == "en-us")|| (stLangCode.ToLower() == "es")) ? "a=document.querySelector('a[class$=\"-today\"]');if(a){a.href;}else{''}" : "a=document.querySelector('#page-body .section a');if(a){a.href;}else{''}";
-                    if ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es"))
+                    bool isPass = theDate.Date != DateTime.Now.Date || ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es") || (stLangCode.ToLower() == "ar"));
+                    if (isPass)
                     {
-                        mainURL = $"{stURL}/{DateTime.Now.Year.ToString()}/{DateTime.Now.Month.ToString("D2")}/{DateTime.Now.Day.ToString("D2")}";   // I cannot get its link from its main page.
+                        stURL += $"/{theDate.Year.ToString()}/{theDate.Month.ToString("D2")}/{theDate.Day.ToString("D2")}/?calendar-redirect=true&post-type=post";
+                    }
+                    string bufQ = (stURL.Contains("?") == true) ? "&" : "?";
+                    string mesg = await LoadPageAsync(webView, new Uri(stURL +bufQ+"t="+DateTime.Now.Millisecond.ToString()));
+                    if (mesg != "") ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, stURL + ": *LoadPageAsync* fail : " + mesg);
+
+                    if (isPass)
+                    {
+                        mainURL = await webView.InvokeScriptAsync("eval", new string[] { "location.href;" });
                     }
                     else
                     {
+                        //if (theDate.Date != DateTime.Now.Date)
+                        //{
+                        //    webScript = "a=document.querySelector(\"#page-body .panel-body a\");(a==null)?\"\":a.href";
+                        //} else
+                        //{
+                        webScript = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "a=document.querySelector('a[class$=\"-today\"]');if(a){a.href;}else{''}" : "a=document.querySelector('#page-body .section a');if(a){a.href;}else{''}";
+                        //}
+                        //else
                         for (int i0 = 0; i0 < 40; i0++)
                         {
                             mainURL = await webView.InvokeScriptAsync("eval", new string[] { webScript });
@@ -249,10 +269,7 @@ namespace MYCGenerator.ViewModels
             //* [2017-07-14 15:55] Get MainURL
             if (pageURL.Count == 0)
                 pageURL.Add(new VMContentAnswerPair());
-            string pageUri = stURL;
-            if (date == null)
-            {
-                pageUri = mainURL;
+            string pageUri = mainURL;
                 if (pageUri == null)
                 {
                     ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.CannotGetPageLink);
@@ -261,9 +278,6 @@ namespace MYCGenerator.ViewModels
 
                 // * [2019-02-04 00:05] Since for english one, it just provides its own related path
 
-            }
-            //else //TODO ******************
-
             OneOfPropInfo.SetValue(pageURL[0], pageUri);
             //* [2017-07-15 22:30] Get the main Part
             //** [2017-06-21 16:15] Get its WebSite
@@ -271,8 +285,17 @@ namespace MYCGenerator.ViewModels
             {
                 try
                 {
-                    string mesg = await LoadPageAsync(webView, new Uri(pageUri));
-                    if (mesg != "") ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, pageUri+ ": *LoadPageAsync* fail :" + mesg);
+                    string bufQ = (pageUri.Contains("?") == true) ? "&" : "?";
+                    for (int i0 = 0; i0 < 10; i0++)
+                    {
+                        string mesg = await LoadPageAsync(webView, new Uri(pageUri+bufQ+"t="+DateTime.Now.Millisecond.ToString()));
+                        if (mesg != "")
+                        {
+                            ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.MainPageLinkFail, pageUri + ": *LoadPageAsync* fail :" + mesg);
+                            await Task.Delay(300);
+                        }
+                        else break;
+                    }
                 }
                 catch (Exception)
                 {
@@ -355,7 +378,7 @@ namespace MYCGenerator.ViewModels
             {
                 string search = "";
                 string version = "";
-                string script = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "encodeURI(document.querySelector('.devo-scriptureinsight a').innerText)" : "a=document.querySelector('div.passage-box span');if(!!a){encodeURI(a.innerText)}";
+                string script = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "encodeURI(document.querySelector('.devo-scriptureinsight a, .devo-scriptureinsight button').innerText)" : "a=document.querySelector('div.passage-box span');if(!!a){encodeURI(a.innerText)}";
                 try
                 {
                     search = await webView.InvokeScriptAsync("eval", new string[] { script });
@@ -367,8 +390,11 @@ namespace MYCGenerator.ViewModels
 
                 switch (stLangCode.ToLower())
                 {
-                    case "en-us": case "es":
+                    case "en-us":
                         version = "";
+                        break;
+                    case "es":
+                        version = "RVR1960";
                         break;
                     case "de":
                         version = "HOF";

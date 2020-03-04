@@ -21,35 +21,35 @@ namespace MYCGenerator4OurDailyBread.ViewModels
             this.Add(new VMODBLangCode()
             {
                 View = "Afrikaans",
-                Address = "https://afrikaans-odb.org/",
+                Address = "https://afrikaans-odb.org",
                 LangCode = "af"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Bahasa Indonesia",
-                Address = "https://santapanrohani.org/",
+                Address = "https://santapanrohani.org",
                 LangCode = "id"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Bahasa Malaysia",
-                Address = "https://pedomanharian.org/",
+                Address = "https://pedomanharian.org",
                 LangCode = "ms"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Burmese",
-                Address = "https://myanmar-odb.org/",
+                Address = "https://myanmar-odb.org",
                 LangCode = "my"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Deutsch (German)",
-                Address = "https://unsertaglichbrot.org/",
+                Address = "https://unsertaglichbrot.org",
                 LangCode = "de"
             });
 
@@ -63,63 +63,63 @@ namespace MYCGenerator4OurDailyBread.ViewModels
             this.Add(new VMODBLangCode()
             {
                 View = "Español (Spanish)",
-                Address = "https://nuestropandiario.org/",
+                Address = "https://nuestropandiario.org",
                 LangCode = "es"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Français (French)",
-                Address = "https://www.ministeresnpq.org/",
+                Address = "https://www.ministeresnpq.org",
                 LangCode = "fr"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Italiano (Italian)",
-                Address = "https://ilnostropanequotidiano.org/",
+                Address = "https://ilnostropanequotidiano.org",
                 LangCode = "it"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Kayin",                             //The same as Khmer one
-                Address = "https://kayin-odb.org/",
+                Address = "https://kayin-odb.org",
                 LangCode = "kar"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Khmer (Camodian)",                //Different
-                Address = "https://khmer-odb.org/",
+                Address = "https://khmer-odb.org",
                 LangCode = "km"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Nederlands (Dutch)",
-                Address = "https://onsdagelijksbrood.org/",
+                Address = "https://onsdagelijksbrood.org",
                 LangCode = "nl"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Polski (Polish)",
-                Address = "https://codziennychleb.org/",
+                Address = "https://codziennychleb.org",
                 LangCode = "pl"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Português (Portuguese)",        //Different one
-                Address = "https://paodiario.org/",
+                Address = "https://paodiario.org",
                 LangCode = "pt"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "Русский (Russian)",
-                Address = "https://russian-odb.org/",
+                Address = "https://russian-odb.org",
                 LangCode = "ru"
             });
 
@@ -134,7 +134,7 @@ namespace MYCGenerator4OurDailyBread.ViewModels
             this.Add(new VMODBLangCode()
             {
                 View = "Tiếng Việt (Vietnamese)",
-                Address = "https://vietnamese-odb.org/",
+                Address = "https://vietnamese-odb.org",
                 LangCode = "vi"
             });
 
@@ -162,28 +162,28 @@ namespace MYCGenerator4OurDailyBread.ViewModels
             this.Add(new VMODBLangCode()
             {
                 View = "ภาษาไทย (Thai)",
-                Address = "https://thaiodb.org/",
+                Address = "https://thaiodb.org",
                 LangCode = "th"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "简体中文 (Chinese Simplified)",
-                Address = "https://simplified-odb.org/",
+                Address = "https://simplified-odb.org",
                 LangCode = "zh-CN"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "繁體中文 (Chinese Traditional)",
-                Address = "https://traditional-odb.org/",
+                Address = "https://traditional-odb.org",
                 LangCode = "zh-TW"
             });
 
             this.Add(new VMODBLangCode()
             {
                 View = "日本語 (Japanese)",
-                Address = "https://japanese-odb.org/",
+                Address = "https://japanese-odb.org",
                 LangCode = "jp"
             });
 

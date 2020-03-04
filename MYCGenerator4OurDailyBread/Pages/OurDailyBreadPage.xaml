@@ -31,7 +31,9 @@
             </Grid.RowDefinitions>
             <ScrollViewer VerticalScrollMode="Auto">
                 <StackPanel>
-                    <DatePicker Date="{Binding ourDailyBread.theDate,ElementName=page, Mode=TwoWay}" HorizontalAlignment="Center" Margin="4" IsEnabled="False"/>
+                    <DatePicker Date="{Binding ourDailyBread.theDate,ElementName=page, Mode=TwoWay}" HorizontalAlignment="Center" Margin="4" 
+                                DateChanged="DatePicker_DateChanged"
+                                IsEnabled="True"/>
 
                     <!--#region 1. Head-->
                     <Grid>

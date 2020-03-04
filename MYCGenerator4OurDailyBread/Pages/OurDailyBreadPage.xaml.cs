@@ -806,5 +806,13 @@ namespace MYCGenerator.Pages
             IsHorizontalPair = LocalSettingsHelper.DefaultIsHorizontalPair;
             PairMargin = LocalSettingsHelper.DefaultPairMargin;
         }
+
+        private void DatePicker_DateChanged(object sender, DatePickerValueChangedEventArgs e)
+        {
+            var askedDate = e.NewDate;
+            if (e.OldDate.Date == askedDate.Date) return;
+            init_Answer();
+            init_Content();
+        }
     }
 }
