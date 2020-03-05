@@ -361,111 +361,6 @@ namespace MYCGenerator.ViewModels
                     imgURL = "https:" + imgURL;
                 OneOfPropInfo.SetValue(this.imgURL[0], imgURL);
             }
-            //* [2017-07-19 12:48] Get its bible's URL
-            string bibleURL = ""; // Gotten from its link
-            string biblegetwayURL = ""; // For some cases
-            try
-            {
-                bibleURL = await webView.InvokeScriptAsync("eval", new string[] { "a=document.querySelector('div[class^=\"passage-box\"] a');a.href" });
-            }
-            catch (Exception)
-            {
-                bibleURL = "";
-            }
-
-            if (bibleURL == "" || (stLangCode.ToLower() == "en-us") || (stLangCode == "ru") || (stLangCode == "ta") || (stLangCode == "hi") || (stLangCode == "it") || (stLangCode == "nl") || (stLangCode == "pt")
-                || (stLangCode == "es") || (stLangCode == "de"))
-            {
-                string search = "";
-                string version = "";
-                string script = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "encodeURI(document.querySelector('.devo-scriptureinsight a, .devo-scriptureinsight button').innerText)" : "a=document.querySelector('div.passage-box span');if(!!a){encodeURI(a.innerText)}";
-                try
-                {
-                    search = await webView.InvokeScriptAsync("eval", new string[] { script });
-                }
-                catch (Exception)
-                {
-                    search = "null";
-                }
-
-                switch (stLangCode.ToLower())
-                {
-                    case "en-us":
-                        version = "";
-                        break;
-                    case "es":
-                        version = "RVR1960";
-                        break;
-                    case "de":
-                        version = "HOF";
-                        break;
-                    case "ru":
-                        version = "NRT";
-                        break;
-                    case "ta":
-                        version = "ERV-TA";
-                        break;
-                    case "hi":
-                        version = "ERV-HI";
-                        break;
-                    case "it":
-                        version = "NR2006";
-                        break;
-                    case "nl":
-                        version = "BB";
-                        break;
-                    case "pt":
-                        version = "ARC";
-                        break;
-                    default:
-                        break;
-                }
-                if (search != "null")
-                {
-                    if (stLangCode == "de")
-                    {
-                        search = search.Replace(",", "%3A").Replace("%2C", "%3A");
-                    }
-                    biblegetwayURL = "https://www.biblegateway.com/passage/?search=" + search +
-                        ((version == "") ? "" : ("&version=" + version));
-                }
-            }
-
-            if ((bibleURL == "") && (biblegetwayURL == ""))
-            {
-                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoBibleUri, pageUri);
-            }
-            else
-            {
-                ////* [2017-09-06 15:42] Correction for German's bible
-                //if (stLangCode.ToLower() == "de")
-                //    bibleURL = bibleURL.Replace("%2C", "%3A");
-
-                if (bibleURL != "" && bibleURL.IndexOf("http") != 0)
-                    bibleURL = "http:" + bibleURL;
-                if (this.bibleURL.Count == 0)
-                    this.bibleURL.Add(new VMContentAnswerPair());
-                string stBurlForBtn = (bibleURL != "") ? bibleURL : biblegetwayURL;
-                OneOfPropInfo.SetValue(this.bibleURL[0], stBurlForBtn);
-
-                //* [2017-07-19 12:55] Get its bible's content
-                ObservableCollection<string> BibleContent = new ObservableCollection<string>();
-                try
-                {
-                    await GetBibleContent((biblegetwayURL != "") ? biblegetwayURL : bibleURL, stLangCode, BibleContent);
-                }
-                catch (Exception)
-                {
-                }
-                for (int i0 = 0; i0 < BibleContent.Count; i0++)
-                {
-                    while (i0 >= this.BibleContent.Count)
-                        this.BibleContent.Add(new VMContentAnswerPair());
-                    OneOfPropInfo.SetValue(this.BibleContent[i0], BibleContent[i0]);
-                }
-                //* [2017-08-25 10:33] Notify that the bible content is changed
-                this.BibleContent.NoticeCollectionChanged(this.BibleContent, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            }
             //* [2017-07-06 17:28] Get its mp3's URL
             int iMp3 = 0;
             var mp3Link = (isAnswer) ? this.answerMP3 : this.contentMp3;
@@ -590,6 +485,110 @@ namespace MYCGenerator.ViewModels
                 this.thought.NoticeCollectionChanged(this.thought, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
             //}
+            //* [2017-07-19 12:48] Get its bible's URL
+            string bibleURL = ""; // Gotten from its link
+            string biblegetwayURL = ""; // For some cases
+            try
+            {
+                bibleURL = await webView.InvokeScriptAsync("eval", new string[] { "a=document.querySelector('div[class^=\"passage-box\"] a');a.href" });
+            }
+            catch (Exception)
+            {
+                bibleURL = "";
+            }
+
+            if (bibleURL == "" || (stLangCode.ToLower() == "en-us") || (stLangCode == "ta") || (stLangCode == "hi") || (stLangCode == "it") || (stLangCode == "nl") || (stLangCode == "pt")
+                || (stLangCode == "es") || (stLangCode == "de"))
+            {
+                string search = "";
+                string version = "";
+                string script = ((stLangCode.ToLower() == "en-us") || (stLangCode.ToLower() == "es")) ? "encodeURI(document.querySelector('.devo-scriptureinsight a, .devo-scriptureinsight button').innerText)" : "a=document.querySelector('div.passage-box span');if(!!a){encodeURI(a.innerText)}";
+                try
+                {
+                    search = await webView.InvokeScriptAsync("eval", new string[] { script });
+                }
+                catch (Exception)
+                {
+                    search = "null";
+                }
+
+                switch (stLangCode.ToLower())
+                {
+                    case "en-us":
+                        version = "";
+                        break;
+                    case "es":
+                        version = "RVR1960";
+                        break;
+                    case "de":
+                        version = "HOF";
+                        break;
+                    case "ru":
+                        version = "NRT";
+                        break;
+                    case "ta":
+                        version = "ERV-TA";
+                        break;
+                    case "hi":
+                        version = "ERV-HI";
+                        break;
+                    case "it":
+                        version = "NR2006";
+                        break;
+                    case "nl":
+                        version = "BB";
+                        break;
+                    case "pt":
+                        version = "ARC";
+                        break;
+                    default:
+                        break;
+                }
+                if (search != "null")
+                {
+                    if (stLangCode == "de")
+                    {
+                        search = search.Replace(",", "%3A").Replace(".",",").Replace("%2C", "%3A");
+                    }
+                    biblegetwayURL = "https://www.biblegateway.com/passage/?search=" + search +
+                        ((version == "") ? "" : ("&version=" + version));
+                }
+            }
+
+            if ((bibleURL == "") && (biblegetwayURL == ""))
+            {
+                ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoBibleUri, pageUri);
+            }
+            else
+            {
+                ////* [2017-09-06 15:42] Correction for German's bible
+
+                if (bibleURL != "" && bibleURL.IndexOf("http") != 0)
+                    bibleURL = "http:" + bibleURL;
+                if (this.bibleURL.Count == 0)
+                    this.bibleURL.Add(new VMContentAnswerPair());
+                string stBurlForBtn = (bibleURL != "") ? bibleURL : biblegetwayURL;
+                OneOfPropInfo.SetValue(this.bibleURL[0], stBurlForBtn);
+
+                //* [2017-07-19 12:55] Get its bible's content
+                ObservableCollection<string> BibleContent = new ObservableCollection<string>();
+                try
+                {
+                    await GetBibleContent((biblegetwayURL != "") ? biblegetwayURL : bibleURL, stLangCode, BibleContent, webView);
+                }
+                catch (Exception exc)
+                {
+                    ErrorHelper.ShowErrorMsg(ErrorHelper.ErrorCode.NoBibleUri, exc.Message);
+                }
+                for (int i0 = 0; i0 < BibleContent.Count; i0++)
+                {
+                    while (i0 >= this.BibleContent.Count)
+                        this.BibleContent.Add(new VMContentAnswerPair());
+                    OneOfPropInfo.SetValue(this.BibleContent[i0], BibleContent[i0]);
+                }
+                //* [2017-08-25 10:33] Notify that the bible content is changed
+                this.BibleContent.NoticeCollectionChanged(this.BibleContent, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
 
             p?.Invoke();
             return;
@@ -631,161 +630,158 @@ namespace MYCGenerator.ViewModels
             }
         }
 
-        private async Task GetBibleContent(string bibleURL, string stLangCode, ObservableCollection<string> bibleContent)
+        private async Task GetBibleContent(string bibleURL, string stLangCode, ObservableCollection<string> bibleContent, WebView wv = null)
         {
-            var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(bibleURL);
-            doc.OptionOutputOriginalCase = true;
-            IEnumerable<HtmlNode> textNodes = new List<HtmlNode>();
-            if (bibleURL.Contains("www.bible.com"))
+            //* [2020-03-04 11:20] Try to use webview instead of HtmlWeb;
+            string webScript = "";
+            if (bibleURL.Contains("bibleonline.ru"))
             {
-                //textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("verse-outter") == true);
-                //textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("bible-text") == true);
-                textNodes = doc.DocumentNode.Descendants().Where(x => x.Attributes["class"]?.Value.Contains("near-black") == true);
+                webScript = @"function getMsg (x) {
+                                        let nName = x.nodeName;
+                                        if(nName =='H3') {Msg+=x.innerText+'\n';}
+                                        else if(nName == 'SPAN') {
+                                            Msg+='BBBBB';
+                                            Msg+=x.getAttribute('vers');
+                                            Msg+='\n';
+                                            Msg+=x.innerText;
+                                        }
+                                        else {
+                                            let len = x.children.length;
+                                            if(x.className=='panel panel-default panel-bible'){Msg+='BBBBB';}
+                                            for(let i0=0;i0<x.children.length;i0++){
+                                                getMsg(x.children[i0]);
+                                            }
+                                        }
+                                        return;
+                                    };
+                                    a=document.querySelectorAll('.tab-content [tabindex=""0""]');
+                                    Msg="""";a.forEach(getMsg);Msg;
+                                        ";
+            } else if (bibleURL.Contains("www.biblegateway.com"))
+            {
+                webScript = @"function getMsg (x) {
+                                        let nName = x.nodeName;
+                                        if(nName =='H1' || nName == 'H3') {Msg+='\n'+x.innerText+'\n';}
+                                        else if(nName == 'SPAN') {
+                                            if(x.querySelectorAll('.versenum, .chapternum').length>0){Msg+='BBBBB';}
+                                            Msg+='\n';
+                                            Msg+=x.innerText;
+                                        }
+                                        else {
+                                            let len = x.children.length;
+                                            if(x.className=='panel panel-default panel-bible'){Msg+='BBBBB';}
+                                            for(let i0=0;i0<x.children.length;i0++){
+                                                getMsg(x.children[i0]);
+                                            }
+                                        }
+                                        return;
+                                    };
+                                    document.querySelectorAll('.footnote, .footnotes, .info').forEach(function(x){x.remove();});
+                                    a=document.querySelectorAll('.passage-text');
+                                    Msg='';a.forEach(function(x){getMsg(x);Msg+='BBBBB';});Msg;
+                                    ";
             }
-            else if (bibleURL.Contains("bibleonline.ru"))
+            else if (bibleURL.Contains("odb-ministries.org"))
             {
-                textNodes = doc.DocumentNode.Descendants("div").Where(x => {
-                    var v = x.Attributes["class"]?.Value;
-                    return (v?.Contains("tab-content") == true) || (v?.Contains("biblecont") == true || ((x.Name == "h2") && (v == "sprite")));
-                });
+                webScript = @"function getMsg (x) {
+                                        let nName = x.nodeName;
+                                        if(nName=='BR' && nBR <4) {
+                                            nBR++;
+                                            if(nBR==1) Msg+='\n';
+                                            else if(nBR==2) Msg+='BBBBB';
+                                            else if(nBR==3) Msg+='Next Section';
+                                        } else nBR=0;
+//                                        Msg+='*'+nName+'*';
+                                        if(nName =='H1' || nName =='H2' || nName == 'H3') {Msg+='\n'+x.innerText+'\n';}
+                                        else if(nName == 'SUP') {
+                                            Msg+='BBBBB';
+                                            Msg+=x.innerText+'\n';
+                                        } else if(nName == '#text'){
+                                            Msg+=x.textContent.trim();
+                                        }
+                                        else {
+                                            let len = x.childNodes.length;
+                                            if(x.className=='panel panel-default panel-bible'){Msg+='BBBBB';}
+                                            for(let i0=0;i0<len;i0++){
+                                                getMsg(x.childNodes[i0]);
+                                            }
+                                        }
+                                        return;
+                                    };
+                                    document.querySelectorAll('footer, script, .cd-top, .jumbotron').forEach(function(x){x.remove();});
+                                    a=document.querySelectorAll('.container');
+                                    Msg='';nBR=0;a.forEach(function(x){Msg+='BBBBB';getMsg(x);});
+                                    (Msg.lastIndexOf('BBBBBNext Section')==(Msg.length-17))?Msg.substring(0,Msg.length-17):Msg;
+                                    ";
             }
-            else
+            else if (bibleURL.Contains("alkitab.sabda.org"))
             {
-                textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value.Contains("text-html") == true);
-                if (textNodes.Count() == 0)
-                {
-                    var ndsBuf = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "container");
-                    if (ndsBuf.Count() > 0)
-                    {
-                        var ndBuf = ndsBuf?.FirstOrDefault();
-                        if (ndsBuf.Count() > 1)
-                            ndBuf = ndsBuf.ElementAt(1);
-                        textNodes = new List<HtmlNode>();
-                        if (ndBuf != null)
-                            ((List<HtmlNode>)textNodes).Add(ndBuf);
-                    }
-                    else
-                    {
-                        textNodes = doc.DocumentNode.Descendants("div").Where(x => x.Attributes["class"]?.Value == "texts"); //For Bahasa Indonesia
-                    }
-                }
+                webScript = @"function getMsg (x) {
+                                        let nName = x.nodeName;
+//                                        Msg+='*'+nName+'*';
+                                        if(nName =='H1' || nName =='H2' || nName == 'H3') {Msg+='\n'+x.innerText+'\n';}
+                                        else if(nName == 'SPAN') {
+                                            if(x.className.indexOf('vref')>=0) Msg+='BBBBB';
+                                            Msg+=x.innerText+'\n';
+                                        } else if(nName == '#text'){
+                                            Msg+=x.textContent.trim();
+                                        }
+                                        else {
+                                            let len = x.childNodes.length;
+                                            if(x.className=='panel panel-default panel-bible'){Msg+='BBBBB';}
+                                            for(let i0=0;i0<len;i0++){
+                                                getMsg(x.childNodes[i0]);
+                                            }
+                                        }
+                                        return;
+                                    };
+                                    document.querySelectorAll('center').forEach(function(x){x.remove();});
+                                    a=document.querySelectorAll('.texts');
+                                    Msg='';a.forEach(function(x){getMsg(x);Msg+='BBBBB';});Msg;
+                                    ";
             }
-
-            foreach (var node in textNodes)
+            else if (bibleURL.Contains("www.bible.com"))
             {
-                UpdateBibleContentByEachNode(bibleURL, node, bibleContent);
-            }
-        }
-
-        private void UpdateBibleContentByEachNode(string url, HtmlNode node, ObservableCollection<string> bibleContent)
-        {
-            string stBuf = "";
-            bool isWwwBibleCom = url.Contains("www.bible.com");
-            bool isRusian = url.Contains("bibleonline.ru");
-            //* [2019-10-11 14:25] For new rule for www.bible.com
-            if (isWwwBibleCom)
+                webScript = @"function getMsg (x) {
+                                        if (isBreak) return;
+                                        let nName = x.nodeName;
+//                                        Msg+='*'+nName+'*';
+                                        if(nName =='A') {
+                                            Msg+='BBBBB'+x.innerText;
+                                        } else if(nName=='AMP-IMG'){
+                                            isBreak =true;
+                                        }
+                                        else {
+                                            let len = x.childNodes.length;
+                                            if(x.className=='panel panel-default panel-bible'){Msg+='BBBBB';}
+                                            for(let i0=0;i0<len;i0++){
+                                                getMsg(x.childNodes[i0]);
+                                            }
+                                        }
+                                        return;
+                                    };
+                                    document.querySelectorAll('.measure-wide-m.center div div div').forEach(x=>x.remove());
+                                    a = document.querySelectorAll('.measure-wide-m.center');
+                                    isBreak = false; Msg = ''; a.forEach(function(x){ getMsg(x); Msg += 'BBBBB'; }); Msg;
+                ";
+            } else
             {
-                if(node.Name=="h1" || node.Name == "div")
-                {
-                    bibleContent.Add(node.InnerText.Trim());
-                }
                 return;
             }
 
-            //* [2017-07-20 10:00] Remove all "footnote"
-            foreach (var inode in node.Descendants("sup").Where(x => x.Attributes["class"]?.Value == "footnote"))
-            {
-                inode.InnerHtml = "";
-            }
-            foreach (var inode in node.Descendants("div").Where(x => x.Attributes["class"]?.Value == "font-btn" || x.Attributes["class"]?.Value.Contains("hidden") == true || x.Attributes["id"]?.Value == "ChapterSidebar"))
-            {
-                inode.InnerHtml = "";
-            }
-            foreach (var inode in node.Descendants("div").Where(x => {
-                var v = x.Attributes["class"]?.Value;
-                return (v == "tab-pane fade");
-            }))
-            {
-                inode.InnerHtml = "";
-            }
-            if (isWwwBibleCom)
-            {
-                foreach (var inode in node.Descendants("span").Where(x => x.Attributes["class"]?.Value?.Contains("note") == true))
-                {
-                    inode.InnerHtml = "";
-                }
-            }
-
-            //* [2017-07-20 10:02] Get each verse ended before a "number"
-            bool isNum = false;
-            foreach (var inode in node.Descendants())
-            {
-                //* [2017-08-17 13:17] Added to add a newline before <p> or after </p>
-                if ((inode.Name == "p" || inode.PreviousSibling?.Name == "p") && stBuf.Length > 0 && stBuf.Last() != '\n')
-                    stBuf += "\n";
-
-                var value = inode.Attributes["class"]?.Value;
-                bool isNewOne = false;
-                if (isWwwBibleCom)
-                {
-                    isNewOne = value?.Contains("label") == true;
-                }
-                else if (isRusian)
-                {
-                    isNewOne = (value?.Contains("row") == true) || (inode.Name == "li")
-                        || ((inode.Name == "p") && (value?.Contains("text-") == true));
-                }
-                else
-                {
-                    isNewOne = (value?.Contains("num") == true || value?.Contains("verse") == true || value == "vref" ||
-                    (inode.Name == "sup" && inode.Attributes["data-reactid"] != null)
-                    )
-                    && value != "passage-verse-wrap"; //"vref" for Bahasa Indonesia
-                }
-
-                if (isNewOne)
-                {
-                    isNum = true;
-                    if (stBuf.Trim() != "")
-                    {
-                        bibleContent.Add(WebUtility.HtmlDecode(stBuf.Trim()));
-                        stBuf = "";
-                    }
-                }
-                else if (inode.Name == "br")
-                {
-                    stBuf += "\n";
-                }
-                else if (inode.Name == "#text")
-                {
-                    stBuf += inode.InnerText;
-                    if (isNum)
-                    {
-                        isNum = false;
-                        stBuf += "\n";
-                    }
-                }
-                else if (value?.ToLower().Contains("footnotes") == true || value?.ToLower().Contains("footer") == true)
-                    break;
-
-                if (isRusian)
-                {
-                    if ((inode.Name == "li") && (inode.Attributes["value"] != null))
-                    {
-                        stBuf += inode.Attributes["value"].Value;
-                    }
-                    else if ((inode.Name == "span") && (inode.Attributes["vers"] != null))
-                    {
-                        stBuf += inode.Attributes["vers"].Value + "\n";
-                    }
-                }
-            }
-
-            if (stBuf.Trim() != "")
-                bibleContent.Add(WebUtility.HtmlDecode(stBuf.Trim()));
+            await this.LoadPageAsync(wv, new Uri(bibleURL));
+            string data = await wv.InvokeScriptAsync("eval", new string[] { webScript });
+            data.Split(new string[] { "BBBBB" }, StringSplitOptions.RemoveEmptyEntries).All(
+                x => {
+                    string y = x.Substring((x.IndexOf('\n') == 0) ? 1 : 0);
+                    if (y.LastIndexOf('\n') == (y.Length - 1)) y = y.Substring(0, y.Length - 1);
+                    bibleContent.Add(y);
+                    return true;
+                });
+            return;
 
         }
+
 
         private async Task GetContent(WebView webView, string webScript, ObservableCollection<string> Contents)
         {
